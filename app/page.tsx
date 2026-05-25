@@ -1,65 +1,222 @@
-import Image from "next/image";
+import Link from "next/link";
+import { getTeams, getGames } from "@/lib/firestore";
+import TeamLogo from "@/components/TeamLogo";
 
-export default function Home() {
+export const revalidate = 60; // refresh data every 60 seconds
+
+export default async function HomePage() {
+  const [teams, games] = await Promise.all([getTeams(), getGames()]);
+  const upcomingGames = games.filter((g) => !g.isComplete).slice(0, 3);
+  const recentGames = games.filter((g) => g.isComplete).slice(-3).reverse();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div>
+      {/* Hero */}
+      <section
+        className="relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #0d0f14 0%, #1a1f2e 50%, #0d0f14 100%)",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "var(--gold)" }} />
+
+        <div className="max-w-6xl mx-auto px-4 py-20 sm:py-28 text-center">
+          <div
+            className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest mb-6"
+            style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)", border: "1px solid rgba(245,200,66,0.3)" }}
+          >
+            Inaugural 2026 Season
+          </div>
+
+          <h1
+            className="font-display font-black text-6xl sm:text-8xl uppercase tracking-tight mb-4"
+            style={{ color: "#fff" }}
+          >
+            <span style={{ color: "var(--gold)" }}>HV</span>FF
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="text-lg sm:text-xl mb-2 font-display font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+            Hudson Valley Flag Football
           </p>
+          <p className="text-sm mb-10" style={{ color: "var(--muted)" }}>
+            Beacon, NY · Est. 2019 · Non-profit community league
+          </p>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link
+              href="/schedule"
+              className="px-6 py-3 rounded font-display font-bold text-sm uppercase tracking-wide transition-transform hover:scale-105"
+              style={{ background: "var(--gold)", color: "#0d0f14" }}
+            >
+              View Schedule
+            </Link>
+            <Link
+              href="/standings"
+              className="px-6 py-3 rounded font-display font-bold text-sm uppercase tracking-wide transition-transform hover:scale-105"
+              style={{ background: "var(--surface2)", color: "var(--text)", border: "1px solid var(--border)" }}
+            >
+              Standings
+            </Link>
+            <Link
+              href="/contact"
+              className="px-6 py-3 rounded font-display font-bold text-sm uppercase tracking-wide transition-transform hover:scale-105"
+              style={{ background: "transparent", color: "var(--gold)", border: "1px solid rgba(245,200,66,0.4)" }}
+            >
+              Join the League
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Season snapshot */}
+      <section className="max-w-6xl mx-auto px-4 py-16">
+        <div className="grid sm:grid-cols-3 gap-6 mb-16">
+          {[
+            { label: "Teams", value: String(teams.length), sub: "Winterbash '25–26" },
+            { label: "Seasons", value: "6+", sub: "Years of competition" },
+            { label: "Location", value: "Beacon", sub: "New York" },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-lg p-6 text-center"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            >
+              <div className="font-display font-black text-4xl" style={{ color: "var(--gold)" }}>
+                {stat.value}
+              </div>
+              <div className="font-display font-bold text-lg uppercase tracking-wide mt-1">{stat.label}</div>
+              <div className="text-xs mt-1" style={{ color: "var(--muted)" }}>{stat.sub}</div>
+            </div>
+          ))}
         </div>
-      </main>
+
+        {/* Teams grid */}
+        <div className="mb-16">
+          <h2 className="font-display font-black text-3xl uppercase tracking-wide mb-6 flex items-center gap-3">
+            <span style={{ color: "var(--gold)" }}>—</span> Teams
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {teams.map((team) => (
+              <Link
+                key={team.id}
+                href={`/rosters#${team.slug}`}
+                className="rounded-lg p-4 flex flex-col items-center gap-2 text-center transition-transform hover:scale-[1.02]"
+                style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+              >
+                <TeamLogo slug={team.slug} name={team.name} color={team.color} size={56} />
+                <span className="font-display font-bold text-xs uppercase tracking-wide leading-tight">{team.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Games preview */}
+        <div className="grid md:grid-cols-2 gap-8">
+          <div>
+            <h2 className="font-display font-black text-3xl uppercase tracking-wide mb-4 flex items-center gap-3">
+              <span style={{ color: "var(--gold)" }}>—</span> Upcoming Games
+            </h2>
+            {upcomingGames.length === 0 ? (
+              <div
+                className="rounded-lg p-6 text-center text-sm"
+                style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--muted)" }}
+              >
+                Schedule coming soon
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {upcomingGames.map((game) => {
+                  const home = teams.find((t) => t.id === game.homeTeamId);
+                  const away = teams.find((t) => t.id === game.awayTeamId);
+                  return (
+                    <div key={game.id} className="rounded-lg p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                      <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>
+                        Week {game.week} &middot;{" "}
+                        {new Date(game.date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                      </div>
+                      <div className="font-display font-bold text-base">
+                        {away?.name} <span style={{ color: "var(--muted)" }}>vs</span> {home?.name}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            <Link href="/schedule" className="inline-block mt-3 text-sm font-semibold" style={{ color: "var(--gold)" }}>
+              Full schedule →
+            </Link>
+          </div>
+
+          <div>
+            <h2 className="font-display font-black text-3xl uppercase tracking-wide mb-4 flex items-center gap-3">
+              <span style={{ color: "var(--gold)" }}>—</span> Recent Results
+            </h2>
+            {recentGames.length === 0 ? (
+              <div
+                className="rounded-lg p-6 text-center text-sm"
+                style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "var(--muted)" }}
+              >
+                No results yet
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                {recentGames.map((game) => {
+                  const home = teams.find((t) => t.id === game.homeTeamId);
+                  const away = teams.find((t) => t.id === game.awayTeamId);
+                  return (
+                    <div key={game.id} className="rounded-lg p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                      <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>Week {game.week} · Final</div>
+                      <div className="flex items-center justify-between font-display font-bold text-base">
+                        <span>{away?.name}</span>
+                        <span className="tabular-nums" style={{ color: "var(--gold)" }}>{game.awayScore} &ndash; {game.homeScore}</span>
+                        <span>{home?.name}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            <Link href="/standings" className="inline-block mt-3 text-sm font-semibold" style={{ color: "var(--gold)" }}>
+              Full standings →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* About blurb */}
+      <section style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}>
+        <div className="max-w-6xl mx-auto px-4 py-14 flex flex-col sm:flex-row items-center gap-8">
+          <div className="flex-1">
+            <h2 className="font-display font-black text-3xl uppercase tracking-wide mb-3">
+              Building the <span style={{ color: "var(--gold)" }}>Flag Family</span>
+            </h2>
+            <p className="text-sm leading-relaxed" style={{ color: "var(--muted)" }}>
+              HVFF is a non-profit sports league based in Beacon, NY, dedicated to providing a platform
+              for athletes and building community. We run two seasons a year — summer and winter — and
+              are proud to partner with the local businesses that are the backbone of our community.
+            </p>
+          </div>
+          <div className="flex gap-3 flex-shrink-0">
+            <Link
+              href="/about"
+              className="px-5 py-2.5 rounded font-display font-bold text-sm uppercase tracking-wide"
+              style={{ background: "var(--surface2)", color: "var(--text)", border: "1px solid var(--border)" }}
+            >
+              About Us
+            </Link>
+            <a
+              href="https://www.instagram.com/hvflagfootball"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 rounded font-display font-bold text-sm uppercase tracking-wide"
+              style={{ background: "var(--gold)", color: "#0d0f14" }}
+            >
+              @hvflagfootball
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
