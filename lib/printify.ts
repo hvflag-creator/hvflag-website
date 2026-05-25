@@ -42,6 +42,7 @@ export type PrintifyProduct = {
   images: PrintifyImage[];
   variants: PrintifyVariant[];
   options: PrintifyProductOption[];
+  visible: boolean;
 };
 
 export type PrintifyOrderAddress = {
@@ -66,7 +67,7 @@ export async function getProducts(): Promise<PrintifyProduct[]> {
   });
   const data = await res.json();
   return (data.data ?? []).filter((p: PrintifyProduct) =>
-    p.variants.some((v) => v.is_enabled)
+    p.visible && p.variants.some((v) => v.is_enabled)
   );
 }
 
