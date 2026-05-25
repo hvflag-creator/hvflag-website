@@ -49,12 +49,12 @@ export async function getGames(): Promise<Game[]> {
 export async function getStatsByTeam(teamId: string): Promise<PlayerStats[]> {
   const q = query(collection(db, "stats"), where("teamId", "==", teamId));
   const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PlayerStats));
+  return snap.docs.map((d) => d.data() as PlayerStats);
 }
 
 export async function getAllStats(): Promise<PlayerStats[]> {
   const snap = await getDocs(collection(db, "stats"));
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as PlayerStats));
+  return snap.docs.map((d) => d.data() as PlayerStats);
 }
 
 // ── Seasons ───────────────────────────────────────────────────────────────────
