@@ -5,8 +5,14 @@ import type { Team, Player, Game, PlayerStats, Season } from "./types";
 // ── Teams ─────────────────────────────────────────────────────────────────────
 
 export async function getTeams(): Promise<Team[]> {
-  const snap = await getDocs(collection(db, "teams"));
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Team));
+  try {
+    const snap = await getDocs(collection(db, "teams"));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Team));
+  } catch {
+    // Firestore rules may require auth; return empty so pages fall back to
+    // slug-based team data (e.g. from FlagBucks) without crashing the build.
+    return [];
+  }
 }
 
 export async function getTeamById(id: string): Promise<Team | undefined> {
@@ -38,10 +44,16 @@ export async function getPlayersByTeam(teamId: string): Promise<Player[]> {
 // ── Games ─────────────────────────────────────────────────────────────────────
 
 export async function getGames(): Promise<Game[]> {
-  const snap = await getDocs(collection(db, "games"));
-  const games = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Game));
-  // Sort in JS to avoid needing a Firestore composite index
-  return games.sort((a, b) => a.week - b.week || a.date.localeCompare(b.date));
+  try {
+    const snap = await getDocs(collection(db, "games"));
+    const games = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Game));
+    // Sort in JS to avoid needing a Firestore composite index
+    return games.sort(
+      (a, b) => (a.week ?? 0) - (b.week ?? 0) || (a.date ?? "").localeCompare(b.date ?? "")
+    );
+  } catch {
+    return [];
+  }
 }
 
 // ── Stats ─────────────────────────────────────────────────────────────────────
@@ -60,9 +72,13 @@ export async function getAllStats(): Promise<PlayerStats[]> {
 // ── Shop Config ───────────────────────────────────────────────────────────────
 
 export async function getShopConfig(): Promise<{ enabledProductIds: string[] }> {
-  const snap = await getDoc(doc(db, "config", "shop"));
-  if (!snap.exists()) return { enabledProductIds: [] };
-  return snap.data() as { enabledProductIds: string[] };
+  try {
+    const snap = await getDoc(doc(db, "config", "shop"));
+    if (!snap.exists()) return { enabledProductIds: [] };
+    return snap.data() as { enabledProductIds: string[] };
+  } catch {
+    return { enabledProductIds: [] };
+  }
 }
 
 export async function setShopConfig(enabledProductIds: string[]): Promise<void> {
