@@ -21,22 +21,26 @@ export default async function HomePage() {
       >
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "var(--gold)" }} />
 
-        <div className="max-w-6xl mx-auto px-4 py-20 sm:py-28 text-center">
+        <div className="max-w-6xl mx-auto px-4 py-16 sm:py-24 text-center">
           <div
-            className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest mb-6"
+            className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest mb-8"
             style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)", border: "1px solid rgba(245,200,66,0.3)" }}
           >
             Inaugural 2026 Season
           </div>
 
-          <h1
-            className="font-display font-black text-6xl sm:text-8xl uppercase tracking-tight mb-4"
-            style={{ color: "#fff" }}
-          >
-            <span style={{ color: "var(--gold)" }}>HV</span>FF
-          </h1>
+          <div className="flex justify-center mb-6">
+            <img
+              src="/hvff-logo.png"
+              alt="HVFF – Hudson Valley Flag Football"
+              width={420}
+              height={280}
+              className="w-64 sm:w-80 md:w-[420px] drop-shadow-2xl"
+              style={{ objectFit: "contain" }}
+            />
+          </div>
 
-          <p className="text-lg sm:text-xl mb-2 font-display font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+          <p className="text-base sm:text-lg mb-1 font-display font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
             Hudson Valley Flag Football
           </p>
           <p className="text-sm mb-10" style={{ color: "var(--muted)" }}>
