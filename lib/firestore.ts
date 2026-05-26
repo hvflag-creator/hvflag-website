@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, setDoc, query, where } from "firebase/firestore";
 import { db } from "./firebase";
 import type { Team, Player, Game, PlayerStats, Season } from "./types";
 
@@ -55,6 +55,18 @@ export async function getStatsByTeam(teamId: string): Promise<PlayerStats[]> {
 export async function getAllStats(): Promise<PlayerStats[]> {
   const snap = await getDocs(collection(db, "stats"));
   return snap.docs.map((d) => d.data() as PlayerStats);
+}
+
+// ── Shop Config ───────────────────────────────────────────────────────────────
+
+export async function getShopConfig(): Promise<{ enabledProductIds: string[] }> {
+  const snap = await getDoc(doc(db, "config", "shop"));
+  if (!snap.exists()) return { enabledProductIds: [] };
+  return snap.data() as { enabledProductIds: string[] };
+}
+
+export async function setShopConfig(enabledProductIds: string[]): Promise<void> {
+  await setDoc(doc(db, "config", "shop"), { enabledProductIds });
 }
 
 // ── Seasons ───────────────────────────────────────────────────────────────────

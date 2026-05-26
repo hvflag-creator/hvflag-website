@@ -1,10 +1,15 @@
 import { getProducts, getProductMainImage, getMinPrice } from "@/lib/printify";
+import { getShopConfig } from "@/lib/firestore";
 import Link from "next/link";
 
-export const revalidate = 3600;
+export const revalidate = 300; // refresh every 5 minutes
 
 export default async function ShopPage() {
-  const products = await getProducts();
+  const [allProducts, config] = await Promise.all([getProducts(), getShopConfig()]);
+
+  const products = config.enabledProductIds.length > 0
+    ? allProducts.filter((p) => config.enabledProductIds.includes(p.id))
+    : allProducts;
 
   return (
     <div>
