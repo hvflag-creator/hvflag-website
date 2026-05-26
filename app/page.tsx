@@ -208,7 +208,7 @@ export default async function HomePage() {
               About Us
             </Link>
             <a
-              href="https://www.instagram.com/hvflagfootball"
+              href="https://www.instagram.com/hvflag/"
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 rounded font-display font-bold text-sm uppercase tracking-wide"
