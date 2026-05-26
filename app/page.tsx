@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getTeams, getGames } from "@/lib/firestore";
 import TeamLogo from "@/components/TeamLogo";
+import SponsorsSection from "@/components/SponsorsSection";
 
 export const revalidate = 60; // refresh data every 60 seconds
 
@@ -75,7 +76,7 @@ export default async function HomePage() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="grid sm:grid-cols-3 gap-6 mb-16">
           {[
-            { label: "Teams", value: String(teams.length), sub: "Winterbash '25–26" },
+            { label: "Teams", value: String(teams.length), sub: "Summer 2026" },
             { label: "Seasons", value: "6+", sub: "Years of competition" },
             { label: "Location", value: "Beacon", sub: "New York" },
           ].map((stat) => (
@@ -185,6 +186,9 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Sponsors */}
+      <SponsorsSection />
 
       {/* About blurb */}
       <section style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}>

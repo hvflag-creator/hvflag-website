@@ -14,7 +14,7 @@ export default async function SchedulePage() {
           <h1 className="font-display font-black text-5xl uppercase tracking-tight">
             <span style={{ color: "var(--gold)" }}>—</span> Schedule
           </h1>
-          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Winterbash &apos;25–26 Season</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Summer 2026 Season</p>
         </div>
       </div>
 
@@ -26,7 +26,7 @@ export default async function SchedulePage() {
           >
             <div className="font-display font-black text-2xl uppercase mb-2" style={{ color: "var(--gold)" }}>Coming Soon</div>
             <p className="text-sm" style={{ color: "var(--muted)" }}>
-              The Winterbash schedule will be posted here once finalized.
+              The Summer 2026 schedule will be posted here once finalized.
             </p>
           </div>
         ) : (

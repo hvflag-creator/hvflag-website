@@ -23,7 +23,7 @@ export default function GalleryPage() {
             Photos Coming Soon
           </div>
           <p className="text-sm max-w-md mx-auto" style={{ color: "var(--muted)" }}>
-            Game photos and highlights from the Winterbash season will appear here. Follow{" "}
+            Game photos and highlights from the Summer 2026 season will appear here. Follow{" "}
             <a
               href="https://www.instagram.com/hvflagfootball"
               target="_blank"

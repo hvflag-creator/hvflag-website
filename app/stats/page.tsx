@@ -112,7 +112,7 @@ export default function StatsPage() {
           <h1 className="font-display font-black text-5xl uppercase tracking-tight">
             <span style={{ color: "var(--gold)" }}>—</span> Stats
           </h1>
-          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Winterbash &apos;25–26 · Click a column header to sort</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Summer 2026 · Click a column header to sort</p>
         </div>
       </div>
 

@@ -42,7 +42,7 @@ export default function AboutPage() {
               { label: "Teams", value: "8 (and growing)" },
               { label: "Location", value: "Beacon, NY 12508" },
               { label: "Type", value: "Non-profit community league" },
-              { label: "Current season", value: "Winterbash '25–26" },
+              { label: "Current season", value: "Summer 2026" },
             ].map((fact) => (
               <div
                 key={fact.label}
@@ -93,10 +93,10 @@ export default function AboutPage() {
               style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
             >
               <div className="font-display font-black text-xl uppercase mb-2" style={{ color: "var(--gold)" }}>
-                Winter Season
+                Summer Season
               </div>
               <p className="text-sm" style={{ color: "var(--muted)" }}>
-                Fall through winter. Currently running the inaugural Winterbash &apos;25–26 campaign.
+                Fall through winter. Currently running the inaugural Summer 2026 campaign.
               </p>
             </div>
           </div>

@@ -17,8 +17,8 @@ const TEAMS = [
 const OLD_TEAM_IDS = ["marcelos", "ss", "st-roccos", "costellos"];
 
 const SEASON = {
-  id: "winterbash-25-26",
-  name: "Winterbash '25–26",
+  id: "summer-2026",
+  name: "Summer 2026",
   isActive: true,
 };
 

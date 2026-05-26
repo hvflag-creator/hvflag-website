@@ -1,7 +1,7 @@
 import type { Team, Player, Game, PlayerStats, Season } from "./types";
 
 export const SEASONS: Season[] = [
-  { id: "winterbash-25-26", name: "Winterbash '25–'26", isActive: true },
+  { id: "summer-2026", name: "Summer 2026", isActive: true },
 ];
 
 export const TEAMS: Team[] = [

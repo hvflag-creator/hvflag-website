@@ -13,7 +13,7 @@ export default async function StandingsPage() {
           <h1 className="font-display font-black text-5xl uppercase tracking-tight">
             <span style={{ color: "var(--gold)" }}>—</span> Standings
           </h1>
-          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Winterbash &apos;25–26 Season</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Summer 2026 Season</p>
         </div>
       </div>
 
