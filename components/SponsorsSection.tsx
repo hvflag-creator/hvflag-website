@@ -82,9 +82,9 @@ function SponsorCard({
     >
       {sponsor.logo ? (
         <img
-          src={`/sponsors/${sponsor.logo}`}
+          src={`/logos/${sponsor.logo}`}
           alt={sponsor.name}
-          className="max-h-12 w-auto object-contain"
+          className="max-h-16 w-auto object-contain"
         />
       ) : (
         <span
