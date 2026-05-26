@@ -21,31 +21,29 @@ export default async function HomePage() {
       >
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "var(--gold)" }} />
 
-        <div className="max-w-6xl mx-auto px-4 pt-6 pb-4 text-center">
+        <div className="max-w-6xl mx-auto px-4 text-center flex flex-col items-center gap-2 py-4">
           <div
-            className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest mb-2"
+            className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest"
             style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)", border: "1px solid rgba(245,200,66,0.3)" }}
           >
             Inaugural 2026 Season
           </div>
 
-          <div className="flex justify-center">
-            <img
-              src="/hvff-logo.png"
-              alt="HVFF – Hudson Valley Flag Football"
-              width={420}
-              height={280}
-              className="w-64 sm:w-80 md:w-[420px] drop-shadow-2xl"
-              style={{ objectFit: "contain" }}
-            />
-          </div>
+          <img
+            src="/hvff-logo.png"
+            alt="HVFF – Hudson Valley Flag Football"
+            className="w-56 sm:w-72 md:w-[380px] block drop-shadow-2xl"
+            style={{ objectFit: "contain" }}
+          />
 
-          <p className="text-base sm:text-lg mb-0.5 font-display font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
-            Hudson Valley Flag Football
-          </p>
-          <p className="text-sm mb-5" style={{ color: "var(--muted)" }}>
-            Beacon, NY · Est. 2019 · Non-profit community league
-          </p>
+          <div>
+            <p className="text-base sm:text-lg font-display font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+              Hudson Valley Flag Football
+            </p>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>
+              Beacon, NY · Est. 2019 · Non-profit community league
+            </p>
+          </div>
 
           <div className="flex flex-wrap justify-center gap-4">
             <Link
