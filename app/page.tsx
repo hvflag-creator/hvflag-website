@@ -21,15 +21,15 @@ export default async function HomePage() {
       >
         <div className="absolute top-0 left-0 right-0 h-1" style={{ background: "var(--gold)" }} />
 
-        <div className="max-w-6xl mx-auto px-4 py-8 sm:py-12 text-center">
+        <div className="max-w-6xl mx-auto px-4 pt-6 pb-4 text-center">
           <div
-            className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest mb-4"
+            className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest mb-2"
             style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)", border: "1px solid rgba(245,200,66,0.3)" }}
           >
             Inaugural 2026 Season
           </div>
 
-          <div className="flex justify-center mb-2">
+          <div className="flex justify-center">
             <img
               src="/hvff-logo.png"
               alt="HVFF – Hudson Valley Flag Football"
@@ -40,10 +40,10 @@ export default async function HomePage() {
             />
           </div>
 
-          <p className="text-base sm:text-lg mb-1 font-display font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+          <p className="text-base sm:text-lg mb-0.5 font-display font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
             Hudson Valley Flag Football
           </p>
-          <p className="text-sm mb-6" style={{ color: "var(--muted)" }}>
+          <p className="text-sm mb-5" style={{ color: "var(--muted)" }}>
             Beacon, NY · Est. 2019 · Non-profit community league
           </p>
 
