@@ -35,7 +35,7 @@ export default function SponsorsSection() {
             <p className="text-xs font-display font-bold uppercase tracking-widest mb-4" style={{ color: "var(--gold)" }}>
               Team Sponsors
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {gold.map((s) => (
                 <SponsorCard key={s.name} sponsor={s} size="medium" />
               ))}

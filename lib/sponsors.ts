@@ -15,11 +15,7 @@ export const SPONSORS: Sponsor[] = [
   { name: "Beacon Bikes", url: "", logo: "beacon-bikes.png", tier: "gold" },
   { name: "Marcelo Home Improvement", url: "", logo: "marcelo-home-improvement.png", tier: "gold" },
   { name: "Southern Dutchess CC", url: "", logo: "southern-dutchess-cc.png", tier: "gold" },
-
-  // Community Sponsors
-  { name: "S&S Par-Tee's", url: "", logo: "ss-par-tees.png", tier: "community" },
-  { name: "Cut & Coat", url: "", logo: "cutncoat.png", tier: "community" },
-  { name: "Queen City E-Gills", url: "", logo: "queen-city-e-gills.png", tier: "community" },
-  { name: "Epique Realty", url: "", tier: "community" },
-  { name: "Carter's", url: "", tier: "community" },
+  { name: "S&S Par-Tee's", url: "", logo: "ss-par-tees.png", tier: "gold" },
+  { name: "Cut & Coat", url: "", logo: "cutncoat.png", tier: "gold" },
+  { name: "Queen City E-Gills", url: "", logo: "queen-city-e-gills.png", tier: "gold" },
 ];
