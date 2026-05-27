@@ -1,14 +1,20 @@
 import Link from "next/link";
-import { getTeams, getGames } from "@/lib/firestore";
+import { getTeams } from "@/lib/firestore";
+import { getAllGames } from "@/lib/sportsbook";
 import TeamLogo from "@/components/TeamLogo";
 import SponsorsSection from "@/components/SponsorsSection";
 
 export const revalidate = 60; // refresh data every 60 seconds
 
+function weekLabel(weekId: string) {
+  const num = weekId.match(/\d+/)?.[0];
+  return num ? `Week ${num}` : weekId;
+}
+
 export default async function HomePage() {
-  const [teams, games] = await Promise.all([getTeams(), getGames()]);
-  const upcomingGames = games.filter((g) => !g.isComplete).slice(0, 3);
-  const recentGames = games.filter((g) => g.isComplete).slice(-3).reverse();
+  const [teams, allGames] = await Promise.all([getTeams(), getAllGames()]);
+  const upcomingGames = allGames.filter((g) => g.status === "open" || g.status === "live").slice(0, 3);
+  const recentGames = allGames.filter((g) => g.status === "settled").slice(-3).reverse();
 
   return (
     <div>
@@ -130,16 +136,23 @@ export default async function HomePage() {
             ) : (
               <div className="flex flex-col gap-3">
                 {upcomingGames.map((game) => {
-                  const home = teams.find((t) => t.id === game.homeTeamId);
-                  const away = teams.find((t) => t.id === game.awayTeamId);
+                  const kickoff = game.kickoff ? new Date(game.kickoff) : null;
                   return (
-                    <div key={game.id} className="rounded-lg p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-                      <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>
-                        Week {game.week} &middot;{" "}
-                        {new Date(game.date).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                    <div key={game.id} className="rounded-lg p-4" style={{ background: "var(--surface)", border: `1px solid ${game.status === "live" ? "var(--gold)" : "var(--border)"}` }}>
+                      <div className="text-xs mb-2 flex items-center gap-2" style={{ color: "var(--muted)" }}>
+                        <span>{weekLabel(game.weekId)}</span>
+                        {kickoff && (
+                          <>
+                            <span>&middot;</span>
+                            <span>{kickoff.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</span>
+                          </>
+                        )}
+                        {game.status === "live" && (
+                          <span className="px-1.5 py-0.5 rounded text-xs font-bold uppercase animate-pulse" style={{ background: "rgba(245,200,66,0.2)", color: "var(--gold)" }}>Live</span>
+                        )}
                       </div>
                       <div className="font-display font-bold text-base">
-                        {away?.name} <span style={{ color: "var(--muted)" }}>vs</span> {home?.name}
+                        {game.awayTeam} <span style={{ color: "var(--muted)" }}>vs</span> {game.homeTeam}
                       </div>
                     </div>
                   );
@@ -164,20 +177,18 @@ export default async function HomePage() {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                {recentGames.map((game) => {
-                  const home = teams.find((t) => t.id === game.homeTeamId);
-                  const away = teams.find((t) => t.id === game.awayTeamId);
-                  return (
-                    <div key={game.id} className="rounded-lg p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-                      <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>Week {game.week} · Final</div>
-                      <div className="flex items-center justify-between font-display font-bold text-base">
-                        <span>{away?.name}</span>
-                        <span className="tabular-nums" style={{ color: "var(--gold)" }}>{game.awayScore} &ndash; {game.homeScore}</span>
-                        <span>{home?.name}</span>
-                      </div>
+                {recentGames.map((game) => (
+                  <div key={game.id} className="rounded-lg p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                    <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>{weekLabel(game.weekId)} · Final</div>
+                    <div className="flex items-center justify-between font-display font-bold text-base">
+                      <span className="truncate flex-1">{game.awayTeam}</span>
+                      <span className="tabular-nums px-3 flex-shrink-0" style={{ color: "var(--gold)" }}>
+                        {game.result?.awayScore} &ndash; {game.result?.homeScore}
+                      </span>
+                      <span className="truncate flex-1 text-right">{game.homeTeam}</span>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             )}
             <Link href="/standings" className="inline-block mt-3 text-sm font-semibold" style={{ color: "var(--gold)" }}>
