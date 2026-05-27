@@ -144,7 +144,7 @@ export default async function HomePage() {
                         {kickoff && (
                           <>
                             <span>&middot;</span>
-                            <span>{kickoff.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}</span>
+                            <span>{kickoff.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York" })}</span>
                           </>
                         )}
                         {game.status === "live" && (

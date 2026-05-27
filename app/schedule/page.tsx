@@ -86,9 +86,9 @@ export default async function SchedulePage() {
                         <div className="text-xs w-36 flex-shrink-0" style={{ color: "var(--muted)" }}>
                           {kickoff ? (
                             <>
-                              {kickoff.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+                              {kickoff.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", timeZone: "America/New_York" })}
                               {" · "}
-                              {kickoff.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
+                              {kickoff.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York" })}
                             </>
                           ) : (
                             "TBD"
