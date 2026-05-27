@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getShopConfig, setShopConfig } from "@/lib/firestore";
 
 const SHOP_ID = process.env.PRINTIFY_SHOP_ID!;
@@ -27,5 +28,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid data" }, { status: 400 });
   }
   await setShopConfig(enabledProductIds);
+  // Immediately bust the shop page cache so changes are visible right away
+  revalidatePath("/shop");
+  revalidatePath("/shop/[productId]", "page");
   return NextResponse.json({ ok: true });
 }
