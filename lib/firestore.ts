@@ -7,11 +7,11 @@ import type { Team, Player, Game, PlayerStats, Season } from "./types";
 
 export async function getTeams(): Promise<Team[]> {
   try {
-    const snap = await getDocs(collection(db, "teams"));
+    const adminDb = getAdminDb();
+    const snap = await adminDb.collection("teams").get();
     return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Team));
-  } catch {
-    // Firestore rules may require auth; return empty so pages fall back to
-    // slug-based team data (e.g. from FlagBucks) without crashing the build.
+  } catch (e) {
+    console.error("[getTeams]", e);
     return [];
   }
 }
@@ -46,13 +46,14 @@ export async function getPlayersByTeam(teamId: string): Promise<Player[]> {
 
 export async function getGames(): Promise<Game[]> {
   try {
-    const snap = await getDocs(collection(db, "games"));
+    const adminDb = getAdminDb();
+    const snap = await adminDb.collection("games").get();
     const games = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Game));
-    // Sort in JS to avoid needing a Firestore composite index
     return games.sort(
       (a, b) => (a.week ?? 0) - (b.week ?? 0) || (a.date ?? "").localeCompare(b.date ?? "")
     );
-  } catch {
+  } catch (e) {
+    console.error("[getGames]", e);
     return [];
   }
 }
