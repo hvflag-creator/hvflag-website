@@ -93,10 +93,10 @@ export default function AboutPage() {
               style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
             >
               <div className="font-display font-black text-xl uppercase mb-2" style={{ color: "var(--gold)" }}>
-                Summer Season
+                Fall Season
               </div>
               <p className="text-sm" style={{ color: "var(--muted)" }}>
-                Fall through winter. Currently running the inaugural Summer 2026 campaign.
+                Fall through winter. Indoor and outdoor competition as the Hudson Valley cools down.
               </p>
             </div>
           </div>
