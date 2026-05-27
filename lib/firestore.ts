@@ -1,5 +1,6 @@
-import { collection, getDocs, doc, getDoc, setDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
 import { db } from "./firebase";
+import { getAdminDb } from "./firebase-admin";
 import type { Team, Player, Game, PlayerStats, Season } from "./types";
 
 // ── Teams ─────────────────────────────────────────────────────────────────────
@@ -73,16 +74,19 @@ export async function getAllStats(): Promise<PlayerStats[]> {
 
 export async function getShopConfig(): Promise<{ enabledProductIds: string[] }> {
   try {
-    const snap = await getDoc(doc(db, "config", "shop"));
-    if (!snap.exists()) return { enabledProductIds: [] };
+    const adminDb = getAdminDb();
+    const snap = await adminDb.collection("config").doc("shop").get();
+    if (!snap.exists) return { enabledProductIds: [] };
     return snap.data() as { enabledProductIds: string[] };
-  } catch {
+  } catch (e) {
+    console.error("[getShopConfig]", e);
     return { enabledProductIds: [] };
   }
 }
 
 export async function setShopConfig(enabledProductIds: string[]): Promise<void> {
-  await setDoc(doc(db, "config", "shop"), { enabledProductIds });
+  const adminDb = getAdminDb();
+  await adminDb.collection("config").doc("shop").set({ enabledProductIds });
 }
 
 // ── Seasons ───────────────────────────────────────────────────────────────────
