@@ -51,7 +51,7 @@ export default async function StatsPage() {
         </div>
       </div>
 
-      <StatsClient rows={rows} teams={teams} />
+      <StatsClient rows={rows} />
     </div>
   );
 }
