@@ -16,7 +16,7 @@ export const GALLERY: GalleryItem[] = [
   // Manual photos
   { type: "photo", src: "/gallery/pancake-blocks.jpg", caption: "Hudson Valley's Finest" },
   { type: "photo", src: "/gallery/marcelos-team.jpg", caption: "Marcelo Home Improvement" },
-  { type: "photo", src: "/gallery/sdcc-team.jpg", caption: "Southern Dutchess CC" },
+  { type: "photo", src: "/gallery/ss-team.jpg", caption: "S&S Par-Tee's" },
 
   // Instagram posts
   { type: "instagram", url: "https://www.instagram.com/p/DYj4n9Ile3s/" },
