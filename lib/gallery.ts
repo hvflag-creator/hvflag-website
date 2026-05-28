@@ -13,5 +13,13 @@ export type GalleryItem =
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const GALLERY: GalleryItem[] = [
-  // Paste your Instagram post URLs here — we'll fill these in together
+  // Manual photos
+  { type: "photo", src: "/gallery/pancake-blocks.jpg", caption: "Hudson Valley's Finest" },
+  { type: "photo", src: "/gallery/marcelos-team.jpg", caption: "Marcelo Home Improvement" },
+  { type: "photo", src: "/gallery/sdcc-team.jpg", caption: "Southern Dutchess CC" },
+
+  // Instagram posts
+  { type: "instagram", url: "https://www.instagram.com/p/DYj4n9Ile3s/" },
+  { type: "instagram", url: "https://www.instagram.com/p/DYj3jW7lZrf/" },
+  { type: "instagram", url: "https://www.instagram.com/p/DYTOsIDDJT8/" },
 ];
