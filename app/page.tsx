@@ -6,13 +6,17 @@ import SponsorsSection from "@/components/SponsorsSection";
 
 export const revalidate = 60; // refresh data every 60 seconds
 
-function weekLabel(weekId: string) {
-  const num = weekId.match(/\d+/)?.[0];
-  return num ? `Week ${num}` : weekId;
-}
-
 export default async function HomePage() {
   const [teams, allGames] = await Promise.all([getTeams(), getAllGames()]);
+
+  // Build a map of weekId → sequential week number (sorted chronologically)
+  const weekIds = [...new Set(allGames.map((g) => g.weekId))].sort((a, b) => {
+    const aKick = allGames.find((g) => g.weekId === a)?.kickoff ?? "";
+    const bKick = allGames.find((g) => g.weekId === b)?.kickoff ?? "";
+    return aKick.localeCompare(bKick);
+  });
+  const weekNumber = (weekId: string) => `Week ${weekIds.indexOf(weekId) + 1}`;
+
   const upcomingGames = allGames.filter((g) => g.status === "open" || g.status === "live").slice(0, 3);
   const recentGames = allGames.filter((g) => g.status === "settled").slice(-3).reverse();
 
@@ -140,7 +144,7 @@ export default async function HomePage() {
                   return (
                     <div key={game.id} className="rounded-lg p-4" style={{ background: "var(--surface)", border: `1px solid ${game.status === "live" ? "var(--gold)" : "var(--border)"}` }}>
                       <div className="text-xs mb-2 flex items-center gap-2" style={{ color: "var(--muted)" }}>
-                        <span>{weekLabel(game.weekId)}</span>
+                        <span>{weekNumber(game.weekId)}</span>
                         {kickoff && (
                           <>
                             <span>&middot;</span>
@@ -179,7 +183,7 @@ export default async function HomePage() {
               <div className="flex flex-col gap-3">
                 {recentGames.map((game) => (
                   <div key={game.id} className="rounded-lg p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-                    <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>{weekLabel(game.weekId)} · Final</div>
+                    <div className="text-xs mb-2" style={{ color: "var(--muted)" }}>{weekNumber(game.weekId)} · Final</div>
                     <div className="flex items-center justify-between font-display font-bold text-base">
                       <span className="truncate flex-1">{game.awayTeam}</span>
                       <span className="tabular-nums px-3 flex-shrink-0" style={{ color: "var(--gold)" }}>

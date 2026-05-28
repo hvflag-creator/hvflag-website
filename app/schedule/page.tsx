@@ -15,10 +15,6 @@ function getTeamMeta(
   );
 }
 
-function weekLabel(weekId: string): string {
-  const num = weekId.match(/\d+/)?.[0];
-  return num ? `Week ${num}` : weekId;
-}
 
 export default async function SchedulePage() {
   const [games, teams] = await Promise.all([getAllGames(), getTeams()]);
@@ -61,11 +57,11 @@ export default async function SchedulePage() {
           </div>
         ) : (
           <div className="flex flex-col gap-10">
-            {weeks.map(([weekId, weekGames]) => (
+            {weeks.map(([weekId, weekGames], weekIndex) => (
               <div key={weekId}>
                 <h2 className="font-display font-black text-xl uppercase tracking-wide mb-3 flex items-center gap-2">
                   <span className="px-2 py-0.5 rounded text-sm" style={{ background: "var(--gold)", color: "#0d0f14" }}>
-                    {weekLabel(weekId)}
+                    Week {weekIndex + 1}
                   </span>
                 </h2>
                 <div className="flex flex-col gap-3">
