@@ -10,6 +10,7 @@ const NAV_LINKS = [
   { href: "/schedule", label: "Schedule" },
   { href: "/standings", label: "Standings" },
   { href: "/rosters", label: "Rosters" },
+  { href: "/history", label: "History" },
   { href: "/stats", label: "Stats" },
   { href: "/all-time", label: "All-Time" },
   { href: "/shop", label: "Shop" },

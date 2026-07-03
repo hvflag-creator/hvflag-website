@@ -295,34 +295,36 @@ export default function AllTimeStatsClient({
             })}
           </div>
 
-          {/* ── Team filter ── */}
-          <div className="flex flex-wrap gap-2 mb-5">
-            <button
-              onClick={() => setTeamFilter("all")}
-              className="px-3 py-1 rounded font-display font-semibold text-xs uppercase tracking-wide transition-colors"
-              style={{
-                background: teamFilter === "all" ? "var(--gold)" : "var(--surface)",
-                color: teamFilter === "all" ? "#0d0f14" : "var(--muted)",
-                border: "1px solid var(--border)",
-              }}
-            >
-              All Teams
-            </button>
-            {teams.map((t) => (
+          {/* ── Team filter (season view only) ── */}
+          {seasonId !== "all-time" && teams.filter(t => t).length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-5">
               <button
-                key={t}
-                onClick={() => setTeamFilter(t)}
+                onClick={() => setTeamFilter("all")}
                 className="px-3 py-1 rounded font-display font-semibold text-xs uppercase tracking-wide transition-colors"
                 style={{
-                  background: teamFilter === t ? "rgba(245,200,66,0.15)" : "var(--surface)",
-                  color: teamFilter === t ? "var(--gold)" : "var(--muted)",
-                  border: teamFilter === t ? "1px solid var(--gold)" : "1px solid var(--border)",
+                  background: teamFilter === "all" ? "var(--gold)" : "var(--surface)",
+                  color: teamFilter === "all" ? "#0d0f14" : "var(--muted)",
+                  border: "1px solid var(--border)",
                 }}
               >
-                {t}
+                All Teams
               </button>
-            ))}
-          </div>
+              {teams.filter(t => t).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTeamFilter(t)}
+                  className="px-3 py-1 rounded font-display font-semibold text-xs uppercase tracking-wide transition-colors"
+                  style={{
+                    background: teamFilter === t ? "rgba(245,200,66,0.15)" : "var(--surface)",
+                    color: teamFilter === t ? "var(--gold)" : "var(--muted)",
+                    border: teamFilter === t ? "1px solid var(--gold)" : "1px solid var(--border)",
+                  }}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* ── Sortable table ── */}
           {filtered.length === 0 ? (
