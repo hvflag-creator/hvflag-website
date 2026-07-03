@@ -16,6 +16,8 @@ export default async function AllTimePage() {
     recTgt:   p.recTgt,   recRec:   p.recRec,   recYds:  p.recYds,  recTDs:  p.recTDs,
     defInt:   p.defInt,   defPBU:   p.defPBU,   defSacks: p.defSacks, defPulls: p.defPulls,
     defFF:    p.defFF,    defFR:    p.defFR,    defTDs:  p.defTDs,  defTFL:  p.defTFL,
+    fgMade:   p.fgMade,
+    pancakes: 0,
   }));
 
   return (

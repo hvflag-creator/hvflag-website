@@ -36,13 +36,15 @@ function aggregate(rows: SeasonStat[]): SeasonStat[] {
       t.recTgt   += r.recTgt;   t.recRec   += r.recRec;   t.recYds   += r.recYds;   t.recTDs  += r.recTDs;
       t.defInt   += r.defInt;   t.defPBU   += r.defPBU;   t.defSacks += r.defSacks; t.defPulls += r.defPulls;
       t.defFF    += r.defFF;    t.defFR    += r.defFR;    t.defTDs   += r.defTDs;   t.defTFL  += r.defTFL;
+      t.fgMade   += r.fgMade;
+      t.pancakes += r.pancakes;
       t.teamName  = r.teamName; // keep most recent team
     }
   }
   return Object.values(map);
 }
 
-type Category = "passing" | "rushing" | "receiving" | "defense";
+type Category = "passing" | "rushing" | "receiving" | "defense" | "kicking";
 
 const CATEGORIES: {
   id: Category;
@@ -54,7 +56,7 @@ const CATEGORIES: {
 }[] = [
   {
     id: "passing", label: "Passing",
-    filter: (r) => r.passAtt > 0,
+    filter: (r) => r.passAtt > 0 || r.passYds > 0 || r.passTDs > 0,
     defaultSort: "passYds",
     leaderStats: [
       { key: "passYds",    label: "Pass Yards" },
@@ -72,7 +74,7 @@ const CATEGORIES: {
   },
   {
     id: "rushing", label: "Rushing",
-    filter: (r) => r.rushAtt > 0,
+    filter: (r) => r.rushAtt > 0 || r.rushYds > 0 || r.rushTDs > 0,
     defaultSort: "rushYds",
     leaderStats: [
       { key: "rushYds", label: "Rush Yards" },
@@ -88,24 +90,22 @@ const CATEGORIES: {
   },
   {
     id: "receiving", label: "Receiving",
-    filter: (r) => r.recTgt > 0,
+    filter: (r) => r.recTgt > 0 || r.recRec > 0 || r.recYds > 0,
     defaultSort: "recYds",
     leaderStats: [
-      { key: "recYds",      label: "Rec Yards" },
-      { key: "recTDs",      label: "Rec TDs" },
-      { key: "recCatchPct", label: "Catch %" },
+      { key: "recYds", label: "Rec Yards" },
+      { key: "recTDs", label: "Rec TDs" },
+      { key: "recRec", label: "Receptions" },
     ],
     cols: [
-      { key: "recYds",      label: "YDS",  title: "Receiving Yards" },
-      { key: "recRec",      label: "REC",  title: "Receptions" },
-      { key: "recTgt",      label: "TGT",  title: "Targets" },
-      { key: "recCatchPct", label: "CTH%", title: "Catch %" },
-      { key: "recTDs",      label: "TD",   title: "Receiving Touchdowns" },
+      { key: "recYds", label: "YDS", title: "Receiving Yards" },
+      { key: "recRec", label: "REC", title: "Receptions" },
+      { key: "recTDs", label: "TD",  title: "Receiving Touchdowns" },
     ],
   },
   {
     id: "defense", label: "Defense",
-    filter: (r) => r.defPulls + r.defInt + r.defPBU + r.defSacks + r.defTDs + r.defTFL > 0,
+    filter: (r) => r.defPulls + r.defInt + r.defPBU + r.defSacks + r.defTDs + r.defTFL + r.pancakes > 0,
     defaultSort: "defPulls",
     leaderStats: [
       { key: "defPulls", label: "Flag Pulls" },
@@ -120,7 +120,19 @@ const CATEGORIES: {
       { key: "defTFL",   label: "TFL",    title: "Tackles For Loss" },
       { key: "defFF",    label: "FF",     title: "Forced Fumbles" },
       { key: "defFR",    label: "FR",     title: "Fumble Recoveries" },
-      { key: "defTDs",   label: "DEF TD", title: "Defensive Touchdowns" },
+      { key: "defTDs",   label: "DEF TD",   title: "Defensive Touchdowns" },
+      { key: "pancakes", label: "PANCAKES", title: "Pancakes (legacy)" },
+    ],
+  },
+  {
+    id: "kicking", label: "Kicking",
+    filter: (r) => r.fgMade > 0,
+    defaultSort: "fgMade",
+    leaderStats: [
+      { key: "fgMade", label: "Field Goals" },
+    ],
+    cols: [
+      { key: "fgMade", label: "FGM", title: "Field Goals Made" },
     ],
   },
 ];

@@ -37,6 +37,7 @@ export type SBStatLine = {
   recTgt: number;  recRec: number;  recYds: number;  recTDs: number;
   defInt: number;  defPBU: number;  defSacks: number; defPulls: number;
   defFF: number;   defFR: number;   defTDs: number;   defTFL: number;
+  fgMade: number;
 };
 
 export type SBStanding = {
@@ -114,10 +115,18 @@ export async function getAllGames(): Promise<SBGame[]> {
 export async function getStandingsFromSportsbook(): Promise<SBStanding[]> {
   const games = await getSettledGames();
   const map: Record<string, SBStanding> = {};
+  // head-to-head win/loss/tie counts: h2h[teamA][teamB] = { wins, losses, ties } (from teamA's perspective)
+  const h2h: Record<string, Record<string, { wins: number; losses: number; ties: number }>> = {};
 
   function ensure(team: string) {
     if (!map[team]) map[team] = { team, wins: 0, losses: 0, ties: 0, pointsFor: 0, pointsAgainst: 0, winPct: 0 };
     return map[team];
+  }
+
+  function ensureH2H(teamA: string, teamB: string) {
+    if (!h2h[teamA]) h2h[teamA] = {};
+    if (!h2h[teamA][teamB]) h2h[teamA][teamB] = { wins: 0, losses: 0, ties: 0 };
+    return h2h[teamA][teamB];
   }
 
   for (const g of games) {
@@ -131,9 +140,21 @@ export async function getStandingsFromSportsbook(): Promise<SBStanding[]> {
     away.pointsFor     += awayScore;
     away.pointsAgainst += homeScore;
 
-    if (homeScore > awayScore)      { home.wins++;   away.losses++; }
-    else if (awayScore > homeScore) { away.wins++;   home.losses++; }
-    else                            { home.ties++;   away.ties++; }
+    const homeRec = ensureH2H(g.homeTeam, g.awayTeam);
+    const awayRec = ensureH2H(g.awayTeam, g.homeTeam);
+
+    if (homeScore > awayScore)      { home.wins++;   away.losses++;  homeRec.wins++;  awayRec.losses++; }
+    else if (awayScore > homeScore) { away.wins++;   home.losses++;  awayRec.wins++;  homeRec.losses++; }
+    else                            { home.ties++;   away.ties++;    homeRec.ties++;  awayRec.ties++; }
+  }
+
+  // head-to-head win pct between two teams; null if they haven't played
+  function h2hWinPct(teamA: string, teamB: string): number | null {
+    const rec = h2h[teamA]?.[teamB];
+    if (!rec) return null;
+    const g = rec.wins + rec.losses + rec.ties;
+    if (g === 0) return null;
+    return (rec.wins + rec.ties * 0.5) / g;
   }
 
   return Object.values(map)
@@ -141,7 +162,19 @@ export async function getStandingsFromSportsbook(): Promise<SBStanding[]> {
       const g = s.wins + s.losses + s.ties;
       return { ...s, winPct: g === 0 ? 0 : s.wins / g };
     })
-    .sort((a, b) => b.winPct - a.winPct || b.pointsFor - a.pointsFor);
+    .sort((a, b) => {
+      if (b.winPct !== a.winPct) return b.winPct - a.winPct;
+
+      const aVsB = h2hWinPct(a.team, b.team);
+      const bVsA = h2hWinPct(b.team, a.team);
+      if (aVsB !== null && bVsA !== null && aVsB !== bVsA) {
+        return bVsA - aVsB;
+      }
+
+      const aDiff = a.pointsFor - a.pointsAgainst;
+      const bDiff = b.pointsFor - b.pointsAgainst;
+      return bDiff - aDiff;
+    });
 }
 
 // ── Players / Rosters ─────────────────────────────────────────────────────
@@ -180,6 +213,7 @@ export async function getStatsFromSportsbook(): Promise<SBStatLine[]> {
           recTgt: 0,  recRec: 0,  recYds: 0,  recTDs: 0,
           defInt: 0,  defPBU: 0,  defSacks: 0, defPulls: 0,
           defFF: 0,   defFR: 0,   defTDs: 0,   defTFL: 0,
+          fgMade: 0,
         };
       }
       const t = totals[p.id];
@@ -194,6 +228,7 @@ export async function getStatsFromSportsbook(): Promise<SBStatLine[]> {
       t.defSacks += p.defSacks ?? 0; t.defPulls += p.defPulls ?? 0;
       t.defFF    += p.defFF    ?? 0; t.defFR    += p.defFR    ?? 0;
       t.defTDs   += p.defTDs   ?? 0; t.defTFL   += p.defTFL   ?? 0;
+      t.fgMade   += p.fgMade   ?? 0;
     }
   }
 
