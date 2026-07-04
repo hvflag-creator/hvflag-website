@@ -10,8 +10,8 @@ export type SeasonStat = {
   // Defense
   defInt:   number; defPBU:   number; defSacks: number; defPulls: number;
   defFF:    number; defFR:    number; defTDs:   number; defTFL:   number;
-  // Kicking
-  fgMade: number;
+  // Kicking / Special Teams
+  fgMade: number; punt10: number; punt5: number;
   // Special (legacy — tracked in early seasons)
   pancakes: number;
 };
@@ -28,7 +28,7 @@ const _ = (p: { playerName: string; teamName: string } & Partial<SeasonStat>): S
   recTgt: 0,  recRec: 0,  recYds: 0,  recTDs: 0,
   defInt: 0,  defPBU: 0,  defSacks: 0, defPulls: 0,
   defFF: 0,   defFR: 0,   defTDs: 0,   defTFL: 0,
-  fgMade: 0, pancakes: 0,
+  fgMade: 0, punt10: 0, punt5: 0, pancakes: 0,
   ...p,
 });
 
