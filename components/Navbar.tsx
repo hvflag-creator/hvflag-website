@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/history", label: "History" },
   { href: "/stats", label: "Stats" },
   { href: "/all-time", label: "All-Time" },
+  { href: "/coaches", label: "Coaches" },
   { href: "/shop", label: "Shop" },
   { href: "/gallery", label: "Gallery" },
   { href: "/about", label: "About" },
