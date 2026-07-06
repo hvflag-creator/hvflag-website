@@ -84,21 +84,23 @@ export const TEAM_RECORDS: TeamRecord[] = [
 
 // Derive all-time coach records from TEAM_RECORDS
 export type CoachAllTimeRecord = {
-  coach:   string;
-  wins:    number;
-  losses:  number;
-  ties:    number;
-  seasons: number;
-  titles:  number;
+  coach:         string;
+  wins:          number; // regular season
+  losses:        number; // regular season
+  ties:          number;
+  seasons:       number;
+  titles:        number;
   playoffWins:   number;
   playoffLosses: number;
+  totalWins:     number; // regular season + playoffs
+  totalLosses:   number; // regular season + playoffs
 };
 
 export function getCoachAllTimeRecords(): CoachAllTimeRecord[] {
   const map = new Map<string, CoachAllTimeRecord>();
   for (const r of TEAM_RECORDS) {
     if (!map.has(r.coach)) {
-      map.set(r.coach, { coach: r.coach, wins: 0, losses: 0, ties: 0, seasons: 0, titles: 0, playoffWins: 0, playoffLosses: 0 });
+      map.set(r.coach, { coach: r.coach, wins: 0, losses: 0, ties: 0, seasons: 0, titles: 0, playoffWins: 0, playoffLosses: 0, totalWins: 0, totalLosses: 0 });
     }
     const c = map.get(r.coach)!;
     c.wins          += r.wins;
@@ -108,6 +110,8 @@ export function getCoachAllTimeRecords(): CoachAllTimeRecord[] {
     c.titles        += r.champion ? 1 : 0;
     c.playoffWins   += r.playoffWins   ?? 0;
     c.playoffLosses += r.playoffLosses ?? 0;
+    c.totalWins      = c.wins + c.playoffWins;
+    c.totalLosses    = c.losses + c.playoffLosses;
   }
-  return Array.from(map.values()).sort((a, b) => b.wins - a.wins);
+  return Array.from(map.values()).sort((a, b) => b.totalWins - a.totalWins);
 }

@@ -43,20 +43,24 @@ export default function CoachesPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr style={{ background: "var(--surface2)" }}>
-                  <th className="text-left px-4 py-3 font-display font-bold uppercase tracking-wide text-xs">Coach</th>
-                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs">Seasons</th>
-                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs">W</th>
-                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs">L</th>
-                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs hidden sm:table-cell">PCT</th>
-                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs hidden md:table-cell">PO W</th>
-                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs hidden md:table-cell">PO L</th>
-                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs">Titles</th>
+                  <th className="text-left px-4 py-3 font-display font-bold uppercase tracking-wide text-xs" rowSpan={2}>Coach</th>
+                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs" rowSpan={2}>Seasons</th>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs border-b" style={{ borderColor: "var(--border)" }} colSpan={2}>Regular Season</th>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs border-b hidden sm:table-cell" style={{ borderColor: "var(--border)" }} colSpan={2}>Playoffs</th>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs border-b" style={{ borderColor: "var(--border)", color: "var(--gold)" }} colSpan={2}>Overall</th>
+                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs" rowSpan={2}>Titles</th>
+                </tr>
+                <tr style={{ background: "var(--surface2)" }}>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs">W</th>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs">L</th>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs hidden sm:table-cell">W</th>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs hidden sm:table-cell">L</th>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs" style={{ color: "var(--gold)" }}>W</th>
+                  <th className="text-center px-3 py-1.5 font-display font-bold uppercase tracking-wide text-xs" style={{ color: "var(--gold)" }}>L</th>
                 </tr>
               </thead>
               <tbody>
                 {allTime.map((c) => {
-                  const g = c.wins + c.losses + c.ties;
-                  const pct = g === 0 ? ".000" : (c.wins / g).toFixed(3).replace(/^0/, "");
                   return (
                     <tr
                       key={c.coach}
@@ -79,9 +83,10 @@ export default function CoachesPage() {
                       <td className="px-3 py-3 text-center tabular-nums" style={{ color: "var(--muted)" }}>{c.seasons}</td>
                       <td className="px-3 py-3 text-center font-display font-bold">{c.wins}</td>
                       <td className="px-3 py-3 text-center font-display font-bold">{c.losses}</td>
-                      <td className="px-3 py-3 text-center tabular-nums hidden sm:table-cell" style={{ color: "var(--muted)" }}>{pct}</td>
-                      <td className="px-3 py-3 text-center tabular-nums hidden md:table-cell" style={{ color: "var(--muted)" }}>{c.playoffWins}</td>
-                      <td className="px-3 py-3 text-center tabular-nums hidden md:table-cell" style={{ color: "var(--muted)" }}>{c.playoffLosses}</td>
+                      <td className="px-3 py-3 text-center tabular-nums hidden sm:table-cell" style={{ color: "var(--muted)" }}>{c.playoffWins}</td>
+                      <td className="px-3 py-3 text-center tabular-nums hidden sm:table-cell" style={{ color: "var(--muted)" }}>{c.playoffLosses}</td>
+                      <td className="px-3 py-3 text-center font-display font-black" style={{ color: "var(--gold)" }}>{c.totalWins}</td>
+                      <td className="px-3 py-3 text-center font-display font-black" style={{ color: "var(--gold)" }}>{c.totalLosses}</td>
                       <td className="px-3 py-3 text-center">
                         {c.titles > 0 ? (
                           <span className="font-display font-black" style={{ color: "var(--gold)" }}>{c.titles}</span>
@@ -96,7 +101,7 @@ export default function CoachesPage() {
             </table>
           </div>
           <p className="mt-3 text-xs" style={{ color: "var(--muted)" }}>
-            W/L = regular season · PO = playoffs · PCT = Win % · Titles = league championships
+            Sorted by overall wins (regular season + playoffs) · Titles = league championships
           </p>
         </section>
 
