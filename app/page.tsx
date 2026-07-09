@@ -3,6 +3,7 @@ import { getTeams } from "@/lib/firestore";
 import { getAllGames } from "@/lib/sportsbook";
 import TeamLogo from "@/components/TeamLogo";
 import SponsorsSection from "@/components/SponsorsSection";
+import PlayoffBracket from "@/components/PlayoffBracket";
 
 export const revalidate = 60; // refresh data every 60 seconds
 
@@ -81,6 +82,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Playoff bracket */}
+      <div style={{ borderBottom: "1px solid var(--border)" }}>
+        <PlayoffBracket />
+      </div>
 
       {/* Season snapshot */}
       <section className="max-w-6xl mx-auto px-4 py-16">
