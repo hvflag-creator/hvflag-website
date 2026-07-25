@@ -71,15 +71,16 @@ export const TEAM_RECORDS: TeamRecord[] = [
   { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Stinson's Hub", coach: "Besim", wins: 1, losses: 4, playoffWins: 0, playoffLosses: 1 },
   { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Beacon Bikes",  coach: "Kyle",  wins: 2, losses: 3, playoffWins: 3, playoffLosses: 0, champion: true },
 
-  // ── Summer 2026 (current season) ─────────────────────────────────────────
+  // ── Summer 2026 ──────────────────────────────────────────────────────────
+  // Champion: Jack (S&S Par-Tee's) — 3-0 in playoffs
   { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "S&S Par-Tee's", coach: "Jack",    wins: 6, losses: 1, playoffWins: 3, playoffLosses: 0, champion: true },
-  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "CutNCoat",      coach: "Theo",    wins: 2, losses: 5 },
-  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Marcelo's",     coach: "JJ",      wins: 4, losses: 3 },
-  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Costellos",     coach: "Nick",    wins: 6, losses: 1 },
-  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "SDCC",          coach: "Jason",   wins: 5, losses: 2 },
-  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Queen City",    coach: "Ty",      wins: 0, losses: 7 },
-  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Stinson's Hub", coach: "Dennis",  wins: 2, losses: 5 },
-  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Beacon Bikes",  coach: "Anthony", wins: 3, losses: 4 },
+  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Costellos",     coach: "Nick",    wins: 6, losses: 1, playoffWins: 2, playoffLosses: 1 },
+  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "SDCC",          coach: "Jason",   wins: 5, losses: 2, playoffWins: 1, playoffLosses: 1 },
+  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Marcelo's",     coach: "JJ",      wins: 4, losses: 3, playoffWins: 1, playoffLosses: 1 },
+  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Stinson's Hub", coach: "Dennis",  wins: 2, losses: 5, playoffWins: 0, playoffLosses: 1 },
+  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Beacon Bikes",  coach: "Anthony", wins: 3, losses: 4, playoffWins: 0, playoffLosses: 1 },
+  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "CutNCoat",      coach: "Theo",    wins: 2, losses: 5, playoffWins: 0, playoffLosses: 1 },
+  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Queen City",    coach: "Ty",      wins: 0, losses: 7, playoffWins: 0, playoffLosses: 1 },
 ];
 
 // Derive all-time coach records from TEAM_RECORDS
