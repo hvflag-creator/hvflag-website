@@ -162,6 +162,7 @@ export default function VariantPicker({ product }: Props) {
               const isSelected = selected[optIdx] === value.id;
 
               if (option.type === "color") {
+                if (!available) return null;
                 const color = value.colors?.[0] ?? "#ccc";
                 return (
                   <button
