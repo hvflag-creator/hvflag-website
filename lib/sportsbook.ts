@@ -48,6 +48,7 @@ export type SBStanding = {
   pointsFor: number;
   pointsAgainst: number;
   winPct: number;
+  streak: string;
 };
 
 // ── Result overrides for settled games missing a result in Firebase ─────────
@@ -135,11 +136,18 @@ export async function getStandingsFromSportsbook(): Promise<SBStanding[]> {
     return h2h[teamA][teamB];
   }
 
-  for (const g of games) {
+  // Sort games chronologically so streak is computed in the right order
+  const sortedGames = [...games].sort((a, b) => (a.kickoff ?? "").localeCompare(b.kickoff ?? ""));
+  const teamResults: Record<string, ("W" | "L" | "T")[]> = {};
+
+  for (const g of sortedGames) {
     if (!g.result) continue;
     const { homeScore, awayScore } = g.result;
     const home = ensure(g.homeTeam);
     const away = ensure(g.awayTeam);
+
+    if (!teamResults[g.homeTeam]) teamResults[g.homeTeam] = [];
+    if (!teamResults[g.awayTeam]) teamResults[g.awayTeam] = [];
 
     home.pointsFor     += homeScore;
     home.pointsAgainst += awayScore;
@@ -149,9 +157,24 @@ export async function getStandingsFromSportsbook(): Promise<SBStanding[]> {
     const homeRec = ensureH2H(g.homeTeam, g.awayTeam);
     const awayRec = ensureH2H(g.awayTeam, g.homeTeam);
 
-    if (homeScore > awayScore)      { home.wins++;   away.losses++;  homeRec.wins++;  awayRec.losses++; }
-    else if (awayScore > homeScore) { away.wins++;   home.losses++;  awayRec.wins++;  homeRec.losses++; }
-    else                            { home.ties++;   away.ties++;    homeRec.ties++;  awayRec.ties++; }
+    if (homeScore > awayScore) {
+      home.wins++; away.losses++; homeRec.wins++; awayRec.losses++;
+      teamResults[g.homeTeam].push("W"); teamResults[g.awayTeam].push("L");
+    } else if (awayScore > homeScore) {
+      away.wins++; home.losses++; awayRec.wins++; homeRec.losses++;
+      teamResults[g.awayTeam].push("W"); teamResults[g.homeTeam].push("L");
+    } else {
+      home.ties++; away.ties++; homeRec.ties++; awayRec.ties++;
+      teamResults[g.homeTeam].push("T"); teamResults[g.awayTeam].push("T");
+    }
+  }
+
+  function computeStreak(results: ("W" | "L" | "T")[]): string {
+    if (results.length === 0) return "—";
+    const last = results[results.length - 1];
+    let count = 0;
+    for (let i = results.length - 1; i >= 0 && results[i] === last; i--) count++;
+    return `${last}${count}`;
   }
 
   // head-to-head win pct between two teams; null if they haven't played
@@ -166,7 +189,7 @@ export async function getStandingsFromSportsbook(): Promise<SBStanding[]> {
   return Object.values(map)
     .map((s) => {
       const g = s.wins + s.losses + s.ties;
-      return { ...s, winPct: g === 0 ? 0 : s.wins / g };
+      return { ...s, winPct: g === 0 ? 0 : s.wins / g, streak: computeStreak(teamResults[s.team] ?? []) };
     })
     .sort((a, b) => {
       if (b.winPct !== a.winPct) return b.winPct - a.winPct;

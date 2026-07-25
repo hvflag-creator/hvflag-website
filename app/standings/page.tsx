@@ -53,6 +53,7 @@ export default async function StandingsPage() {
                   <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs hidden md:table-cell">PF</th>
                   <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs hidden md:table-cell">PA</th>
                   <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs hidden md:table-cell">DIFF</th>
+                  <th className="text-center px-3 py-3 font-display font-bold uppercase tracking-wide text-xs hidden sm:table-cell">STRK</th>
                 </tr>
               </thead>
               <tbody>
@@ -93,6 +94,14 @@ export default async function StandingsPage() {
                         style={{ color: diff > 0 ? "#22c55e" : diff < 0 ? "#ef4444" : "var(--muted)" }}
                       >
                         {diff > 0 ? "+" : ""}{diff}
+                      </td>
+                      <td
+                        className="px-3 py-3 text-center font-display font-bold hidden sm:table-cell"
+                        style={{
+                          color: s.streak.startsWith("W") ? "#22c55e" : s.streak.startsWith("L") ? "#ef4444" : "var(--muted)",
+                        }}
+                      >
+                        {s.streak}
                       </td>
                     </tr>
                   );
