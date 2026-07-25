@@ -47,19 +47,25 @@ const QF: BracketGame[] = [
 const SF: BracketGame[] = [
   {
     label: "SF1",
-    date: "Tuesday, July 15 · 7:00 PM",
-    away: { name: "Costellos Maverick Pop", slug: "costellos-maverick-pop", color: "#f5c842" },
-    home: { name: "Marcelo Home Improvement", slug: "marcelo-home-improvement", color: "#ef4444" },
-    status: "upcoming",
+    away: { name: "Marcelo Home Improvement", slug: "marcelo-home-improvement", color: "#ef4444", score: 10, eliminated: true },
+    home: { name: "Costellos Maverick Pop", slug: "costellos-maverick-pop", color: "#f5c842", score: 17, winner: true },
+    status: "final",
   },
   {
     label: "SF2",
-    date: "Wednesday, July 16 · 7:00 PM",
-    away: { name: "S&S Par-Tee's", slug: "ss-par-tees", color: "#ec4899" },
-    home: { name: "Southern Dutchess CC", slug: "southern-dutchess-cc", color: "#06b6d4" },
-    status: "upcoming",
+    away: { name: "S&S Par-Tee's", slug: "ss-par-tees", color: "#ec4899", score: 35, winner: true },
+    home: { name: "Southern Dutchess CC", slug: "southern-dutchess-cc", color: "#06b6d4", score: 14, eliminated: true },
+    status: "final",
   },
 ];
+
+const CHAMP: BracketGame = {
+  label: "Championship",
+  date: "Thursday, July 23 · 8:00 PM",
+  away: { name: "S&S Par-Tee's", slug: "ss-par-tees", color: "#ec4899", score: 37, winner: true },
+  home: { name: "Costellos Maverick Pop", slug: "costellos-maverick-pop", color: "#f5c842", score: 30, eliminated: true },
+  status: "final",
+};
 
 function TeamRow({ team, isFinal }: { team: BracketTeam; isFinal: boolean }) {
   return (
@@ -169,14 +175,33 @@ export default function PlayoffBracket() {
             ))}
           </div>
 
-          {/* Championship placeholder */}
+          {/* Championship */}
           <div
-            className="mt-3 rounded-lg px-4 py-3 flex items-center justify-center"
-            style={{ border: "1px dashed rgba(245,200,66,0.25)", background: "rgba(245,200,66,0.03)" }}
+            className="text-[11px] font-display font-bold uppercase tracking-widest mt-6 mb-3 px-1"
+            style={{ color: "var(--gold)" }}
           >
-            <span className="text-xs font-display font-bold uppercase tracking-widest" style={{ color: "rgba(245,200,66,0.4)" }}>
-              Championship — TBD
-            </span>
+            Championship
+          </div>
+          <div
+            className="rounded-lg overflow-hidden"
+            style={{
+              background: "linear-gradient(160deg, #1a1408 0%, #0d0b04 60%, #1a1408 100%)",
+              border: "1px solid rgba(245,200,66,0.5)",
+              boxShadow: "0 0 24px rgba(245,200,66,0.15), 0 0 0 1px rgba(245,200,66,0.1)",
+            }}
+          >
+            <div
+              className="px-3 py-1 flex items-center justify-between"
+              style={{ borderBottom: "1px solid rgba(245,200,66,0.2)" }}
+            >
+              <span className="text-[10px] font-display font-semibold uppercase tracking-widest" style={{ color: "rgba(245,200,66,0.6)" }}>
+                Championship
+              </span>
+              <span className="text-[10px] font-semibold" style={{ color: "var(--gold)" }}>{CHAMP.date}</span>
+            </div>
+            <TeamRow team={CHAMP.away} isFinal={false} />
+            <div style={{ height: 1, background: "rgba(245,200,66,0.15)", margin: "0 12px" }} />
+            <TeamRow team={CHAMP.home} isFinal={false} />
           </div>
         </div>
       </div>
