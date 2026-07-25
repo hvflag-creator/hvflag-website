@@ -31,22 +31,34 @@ export default function VariantPicker({ product }: Props) {
 
   const [currentVariant, setCurrentVariant] = useState<PrintifyVariant | undefined>();
   const [currentImage, setCurrentImage] = useState<string>("");
+  const [activeImageSrc, setActiveImageSrc] = useState<string>("");
   const [added, setAdded] = useState(false);
 
   useEffect(() => {
     const variant = findVariant(product, selected);
     setCurrentVariant(variant);
     if (variant) {
-      setCurrentImage(getImageForVariant(product, variant.id));
+      const img = getImageForVariant(product, variant.id);
+      setCurrentImage(img);
+      setActiveImageSrc(img); // reset to front when variant changes
     }
   }, [selected, product]);
 
   // Initialize image on mount
   useEffect(() => {
     const variant = findVariant(product, selected);
-    if (variant) setCurrentImage(getImageForVariant(product, variant.id));
+    if (variant) {
+      const img = getImageForVariant(product, variant.id);
+      setCurrentImage(img);
+      setActiveImageSrc(img);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // All images available for the current variant, deduped by position
+  const variantImages = currentVariant
+    ? product.images.filter((img) => img.variant_ids.includes(currentVariant.id))
+    : [];
 
   function isValueAvailableForOption(optionIdx: number, valueId: number): boolean {
     // Check if any enabled variant has this value AND the currently selected values for other options
@@ -68,7 +80,7 @@ export default function VariantPicker({ product }: Props) {
       title: product.title,
       variantTitle: currentVariant.title,
       price: currentVariant.price,
-      image: currentImage || (product.images[0]?.src ?? ""),
+      image: currentImage || (product.images[0]?.src ?? ""), // always use front for cart
     });
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
@@ -76,18 +88,52 @@ export default function VariantPicker({ product }: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Product image */}
-      {currentImage && (
+      {/* Main product image */}
+      {activeImageSrc && (
         <div
           className="rounded-lg overflow-hidden aspect-square"
           style={{ background: "var(--surface2)" }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={currentImage}
+            src={activeImageSrc}
             alt={product.title}
             className="w-full h-full object-cover"
           />
+        </div>
+      )}
+
+      {/* Image thumbnails (front / back / etc.) */}
+      {variantImages.length > 1 && (
+        <div className="flex gap-2">
+          {variantImages.map((img) => (
+            <button
+              key={img.src}
+              onClick={() => setActiveImageSrc(img.src)}
+              className="flex flex-col items-center gap-1 group"
+            >
+              <div
+                className="rounded overflow-hidden w-16 h-16 flex-shrink-0 transition-all"
+                style={{
+                  background: "var(--surface2)",
+                  border: `2px solid ${activeImageSrc === img.src ? "var(--gold)" : "var(--border)"}`,
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.src}
+                  alt={img.position}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span
+                className="text-[10px] font-display font-bold uppercase tracking-wide"
+                style={{ color: activeImageSrc === img.src ? "var(--gold)" : "var(--muted)" }}
+              >
+                {img.position}
+              </span>
+            </button>
+          ))}
         </div>
       )}
 
