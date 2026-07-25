@@ -38,7 +38,7 @@ export default async function HomePage() {
             className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest"
             style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)", border: "1px solid rgba(245,200,66,0.3)" }}
           >
-            Inaugural 2026 Season
+            Summer 2026 · Season Complete
           </div>
 
           <img
@@ -79,6 +79,30 @@ export default async function HomePage() {
             >
               Join the League
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Champion banner */}
+      <section
+        className="py-8 border-b text-center"
+        style={{
+          background: "linear-gradient(135deg, rgba(245,200,66,0.1) 0%, rgba(245,200,66,0.04) 100%)",
+          borderColor: "rgba(245,200,66,0.25)",
+        }}
+      >
+        <div className="max-w-6xl mx-auto px-4">
+          <div
+            className="inline-block px-3 py-0.5 rounded-full text-xs font-display font-bold uppercase tracking-widest mb-2"
+            style={{ background: "rgba(245,200,66,0.2)", color: "var(--gold)", border: "1px solid rgba(245,200,66,0.4)" }}
+          >
+            Summer 2026 Champions
+          </div>
+          <div className="font-display font-black text-5xl uppercase tracking-tight">
+            S&amp;S Par-Tee&apos;s
+          </div>
+          <div className="text-sm mt-1" style={{ color: "var(--muted)" }}>
+            Coach Jack · 3&times; HVFF Champion
           </div>
         </div>
       </section>

@@ -72,6 +72,14 @@ export default async function StandingsPage() {
                         <div className="flex items-center gap-2">
                           <TeamLogo slug={meta.slug} name={s.team} color={meta.color} size={28} />
                           <span className="font-display font-bold">{s.team}</span>
+                          {s.team === "S&S Par-Tee's" && (
+                            <span
+                              className="text-xs font-display font-bold px-1.5 py-0.5 rounded hidden sm:inline"
+                              style={{ background: "rgba(245,200,66,0.2)", color: "var(--gold)" }}
+                            >
+                              2026 Champs
+                            </span>
+                          )}
                         </div>
                       </td>
                       <td className="px-3 py-3 text-center font-display font-bold">{s.wins}</td>
