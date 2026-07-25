@@ -19,6 +19,8 @@ export const GALLERY: GalleryItem[] = [
   { type: "photo", src: "/gallery/ss-team.jpg", caption: "S&S Par-Tee's" },
 
   // Instagram posts
+  { type: "instagram", url: "https://www.instagram.com/p/DbL3ztdlQ7z/" },
+  { type: "instagram", url: "https://www.instagram.com/p/DbL6AyClULI/" },
   { type: "instagram", url: "https://www.instagram.com/p/DYj4n9Ile3s/" },
   { type: "instagram", url: "https://www.instagram.com/p/DYj3jW7lZrf/" },
   { type: "instagram", url: "https://www.instagram.com/p/DYTOsIDDJT8/" },
