@@ -37,13 +37,13 @@ export default function ContactPage() {
             {
               icon: "📸",
               label: "Instagram",
-              value: "@hvflagfootball",
-              href: "https://www.instagram.com/hvflagfootball",
+              value: "@hvflag",
+              href: "https://www.instagram.com/hvflag/",
             },
             {
               icon: "📅",
               label: "Seasons",
-              value: "Summer & Winter",
+              value: "Summer & Fall",
             },
           ].map((item) => (
             <div
