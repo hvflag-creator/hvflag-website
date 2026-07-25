@@ -200,48 +200,76 @@ export async function getPlayersFromSportsbook(): Promise<SBPlayer[]> {
 
 // ── Stats (from gameStatSnapshots) ────────────────────────────────────────
 
-export async function getStatsFromSportsbook(): Promise<SBStatLine[]> {
-  try {
-  const snap = await getDocs(collection(sbDb, "gameStatSnapshots"));
-  const totals: Record<string, SBStatLine> = {};
+function blankStatLine(id: string, name: string, team: string, jersey: number | string | null | undefined): SBStatLine {
+  return {
+    id, name, team, jersey: jersey ?? null,
+    passAtt: 0, passCmp: 0, passYds: 0, passTDs: 0, passInt: 0,
+    rushAtt: 0, rushYds: 0, rushTDs: 0,
+    recTgt: 0,  recRec: 0,  recYds: 0,  recTDs: 0,
+    defInt: 0,  defPBU: 0,  defSacks: 0, defPulls: 0,
+    defFF: 0,   defFR: 0,   defTDs: 0,   defTFL: 0,
+    fgMade: 0,
+  };
+}
 
-  for (const doc of snap.docs) {
-    const data = doc.data();
-    const playerStats: SBStatLine[] = data.playerStats ?? [];
-
-    for (const p of playerStats) {
-      const team = normalizeTeam((p as unknown as { team?: string }).team ?? "");
-      if (!totals[p.id]) {
-        totals[p.id] = {
-          id: p.id, name: p.name, team, jersey: p.jersey ?? null,
-          passAtt: 0, passCmp: 0, passYds: 0, passTDs: 0, passInt: 0,
-          rushAtt: 0, rushYds: 0, rushTDs: 0,
-          recTgt: 0,  recRec: 0,  recYds: 0,  recTDs: 0,
-          defInt: 0,  defPBU: 0,  defSacks: 0, defPulls: 0,
-          defFF: 0,   defFR: 0,   defTDs: 0,   defTFL: 0,
-          fgMade: 0,
-        };
-      }
-      const t = totals[p.id];
-      t.passAtt  += p.passAtt  ?? 0; t.passCmp  += p.passCmp  ?? 0;
-      t.passYds  += p.passYds  ?? 0; t.passTDs  += p.passTDs  ?? 0;
-      t.passInt  += p.passInt  ?? 0;
-      t.rushAtt  += p.rushAtt  ?? 0; t.rushYds  += p.rushYds  ?? 0;
-      t.rushTDs  += p.rushTDs  ?? 0;
-      t.recTgt   += p.recTgt   ?? 0; t.recRec   += p.recRec   ?? 0;
-      t.recYds   += p.recYds   ?? 0; t.recTDs   += p.recTDs   ?? 0;
-      t.defInt   += p.defInt   ?? 0; t.defPBU   += p.defPBU   ?? 0;
-      t.defSacks += p.defSacks ?? 0; t.defPulls += p.defPulls ?? 0;
-      t.defFF    += p.defFF    ?? 0; t.defFR    += p.defFR    ?? 0;
-      t.defTDs   += p.defTDs   ?? 0; t.defTFL   += p.defTFL   ?? 0;
-      t.fgMade   += p.fgMade   ?? 0;
-    }
+function accumulateStats(totals: Record<string, SBStatLine>, playerStats: SBStatLine[]) {
+  for (const p of playerStats) {
+    const team = normalizeTeam((p as unknown as { team?: string }).team ?? "");
+    if (!totals[p.id]) totals[p.id] = blankStatLine(p.id, p.name, team, p.jersey);
+    const t = totals[p.id];
+    t.passAtt  += p.passAtt  ?? 0; t.passCmp  += p.passCmp  ?? 0;
+    t.passYds  += p.passYds  ?? 0; t.passTDs  += p.passTDs  ?? 0;
+    t.passInt  += p.passInt  ?? 0;
+    t.rushAtt  += p.rushAtt  ?? 0; t.rushYds  += p.rushYds  ?? 0;
+    t.rushTDs  += p.rushTDs  ?? 0;
+    t.recTgt   += p.recTgt   ?? 0; t.recRec   += p.recRec   ?? 0;
+    t.recYds   += p.recYds   ?? 0; t.recTDs   += p.recTDs   ?? 0;
+    t.defInt   += p.defInt   ?? 0; t.defPBU   += p.defPBU   ?? 0;
+    t.defSacks += p.defSacks ?? 0; t.defPulls += p.defPulls ?? 0;
+    t.defFF    += p.defFF    ?? 0; t.defFR    += p.defFR    ?? 0;
+    t.defTDs   += p.defTDs   ?? 0; t.defTFL   += p.defTFL   ?? 0;
+    t.fgMade   += p.fgMade   ?? 0;
   }
+}
 
+function sortedStatLines(totals: Record<string, SBStatLine>): SBStatLine[] {
   return Object.values(totals).sort(
     (a, b) => (b.passTDs + b.rushTDs + b.recTDs) - (a.passTDs + a.rushTDs + a.recTDs)
   );
+}
+
+export async function getStatsByPhase(): Promise<{ regular: SBStatLine[]; playoffs: SBStatLine[] }> {
+  try {
+    // Build player-id → team map from the players collection
+    const playerSnap = await getDocs(collection(sbDb, "players"));
+    const playerTeamMap: Record<string, string> = {};
+    for (const doc of playerSnap.docs) {
+      const data = doc.data();
+      if (data.team) playerTeamMap[doc.id] = normalizeTeam(data.team);
+    }
+
+    const snap = await getDocs(collection(sbDb, "gameStatSnapshots"));
+    const regularTotals: Record<string, SBStatLine> = {};
+    const playoffTotals: Record<string, SBStatLine> = {};
+
+    for (const doc of snap.docs) {
+      const data = doc.data();
+      const weekId: string = data.weekId ?? "";
+      // Patch team onto each player stat from the players collection
+      const playerStats: SBStatLine[] = (data.playerStats ?? []).map((p: SBStatLine) => ({
+        ...p,
+        team: playerTeamMap[p.id] ?? (p as unknown as { team?: string }).team ?? "",
+      }));
+      accumulateStats(weekId.startsWith("playoffs-") ? playoffTotals : regularTotals, playerStats);
+    }
+
+    return { regular: sortedStatLines(regularTotals), playoffs: sortedStatLines(playoffTotals) };
   } catch {
-    return [];
+    return { regular: [], playoffs: [] };
   }
+}
+
+export async function getStatsFromSportsbook(): Promise<SBStatLine[]> {
+  const { regular } = await getStatsByPhase();
+  return regular;
 }
