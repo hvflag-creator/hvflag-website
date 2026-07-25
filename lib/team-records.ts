@@ -72,7 +72,7 @@ export const TEAM_RECORDS: TeamRecord[] = [
   { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Beacon Bikes",  coach: "Kyle",  wins: 2, losses: 3, playoffWins: 3, playoffLosses: 0, champion: true },
 
   // ── Summer 2026 (current season) ─────────────────────────────────────────
-  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "S&S Par-Tee's", coach: "Jack",    wins: 6, losses: 1, champion: true },
+  { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "S&S Par-Tee's", coach: "Jack",    wins: 6, losses: 1, playoffWins: 3, playoffLosses: 0, champion: true },
   { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "CutNCoat",      coach: "Theo",    wins: 2, losses: 5 },
   { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Marcelo's",     coach: "JJ",      wins: 4, losses: 3 },
   { seasonId: "summer-2026", seasonName: "Summer 2026", teamName: "Costellos",     coach: "Nick",    wins: 6, losses: 1 },

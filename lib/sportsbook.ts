@@ -50,6 +50,12 @@ export type SBStanding = {
   winPct: number;
 };
 
+// ── Result overrides for settled games missing a result in Firebase ─────────
+// Keyed by Firestore document ID. Only applied when the doc's result is null.
+const RESULT_OVERRIDES: Record<string, { homeScore: number; awayScore: number }> = {
+  "CDjuybEx1YITXxyKSxxj": { homeScore: 14, awayScore: 35 }, // SF: S&S Par-Tee's 35 – Southern Dutchess CC 14
+};
+
 // ── Team name normalisation (mirrors FlagBucks) ────────────────────────────
 
 const TEAM_NAME_MAP: Record<string, string> = {
@@ -82,7 +88,7 @@ export async function getSettledGames(): Promise<SBGame[]> {
         awayTeam: normalizeTeam(data.awayTeam ?? ""),
         kickoff: data.kickoff?.toDate?.()?.toISOString() ?? null,
         status: data.status,
-        result: data.result ?? null,
+        result: data.result ?? RESULT_OVERRIDES[d.id] ?? null,
       } as SBGame;
     });
   } catch {
@@ -102,7 +108,7 @@ export async function getAllGames(): Promise<SBGame[]> {
         awayTeam: normalizeTeam(data.awayTeam ?? ""),
         kickoff: data.kickoff?.toDate?.()?.toISOString() ?? null,
         status: data.status,
-        result: data.result ?? null,
+        result: data.result ?? RESULT_OVERRIDES[d.id] ?? null,
       } as SBGame;
     }).sort((a, b) => (a.kickoff ?? "").localeCompare(b.kickoff ?? ""));
   } catch {
