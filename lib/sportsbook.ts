@@ -236,26 +236,6 @@ function blankStatLine(id: string, name: string, team: string, jersey: number | 
   };
 }
 
-function accumulateStats(totals: Record<string, SBStatLine>, playerStats: SBStatLine[]) {
-  for (const p of playerStats) {
-    const team = normalizeTeam((p as unknown as { team?: string }).team ?? "");
-    if (!totals[p.id]) totals[p.id] = blankStatLine(p.id, p.name, team, p.jersey);
-    const t = totals[p.id];
-    t.passAtt  += p.passAtt  ?? 0; t.passCmp  += p.passCmp  ?? 0;
-    t.passYds  += p.passYds  ?? 0; t.passTDs  += p.passTDs  ?? 0;
-    t.passInt  += p.passInt  ?? 0;
-    t.rushAtt  += p.rushAtt  ?? 0; t.rushYds  += p.rushYds  ?? 0;
-    t.rushTDs  += p.rushTDs  ?? 0;
-    t.recTgt   += p.recTgt   ?? 0; t.recRec   += p.recRec   ?? 0;
-    t.recYds   += p.recYds   ?? 0; t.recTDs   += p.recTDs   ?? 0;
-    t.defInt   += p.defInt   ?? 0; t.defPBU   += p.defPBU   ?? 0;
-    t.defSacks += p.defSacks ?? 0; t.defPulls += p.defPulls ?? 0;
-    t.defFF    += p.defFF    ?? 0; t.defFR    += p.defFR    ?? 0;
-    t.defTDs   += p.defTDs   ?? 0; t.defTFL   += p.defTFL   ?? 0;
-    t.fgMade   += p.fgMade   ?? 0;
-  }
-}
-
 function sortedStatLines(totals: Record<string, SBStatLine>): SBStatLine[] {
   return Object.values(totals).sort(
     (a, b) => (b.passTDs + b.rushTDs + b.recTDs) - (a.passTDs + a.rushTDs + a.recTDs)
@@ -264,27 +244,42 @@ function sortedStatLines(totals: Record<string, SBStatLine>): SBStatLine[] {
 
 export async function getStatsByPhase(): Promise<{ regular: SBStatLine[]; playoffs: SBStatLine[] }> {
   try {
-    // Build player-id → team map from the players collection
+    // Build playerName → team map from the players collection (mirrors FlagBucks approach)
     const playerSnap = await getDocs(collection(sbDb, "players"));
-    const playerTeamMap: Record<string, string> = {};
+    const nameToTeamMap: Record<string, string> = {};
     for (const doc of playerSnap.docs) {
       const data = doc.data();
-      if (data.team) playerTeamMap[doc.id] = normalizeTeam(data.team);
+      if (data.name) nameToTeamMap[data.name as string] = normalizeTeam(data.team ?? "");
     }
 
     const snap = await getDocs(collection(sbDb, "gameStatSnapshots"));
     const regularTotals: Record<string, SBStatLine> = {};
     const playoffTotals: Record<string, SBStatLine> = {};
 
+    const n = (v: unknown): number => (typeof v === "number" ? v : 0);
+
     for (const doc of snap.docs) {
       const data = doc.data();
       const weekId: string = data.weekId ?? "";
-      // Patch team onto each player stat from the players collection
-      const playerStats: SBStatLine[] = (data.playerStats ?? []).map((p: SBStatLine) => ({
-        ...p,
-        team: playerTeamMap[p.id] ?? (p as unknown as { team?: string }).team ?? "",
-      }));
-      accumulateStats(weekId.startsWith("playoffs-") ? playoffTotals : regularTotals, playerStats);
+      const totals = weekId.startsWith("playoffs-") ? playoffTotals : regularTotals;
+
+      for (const p of (data.playerStats ?? []) as Array<Record<string, unknown>>) {
+        if (!p.name) continue; // mirrors FlagBucks: if (!ps.name) continue
+        const name = p.name as string;
+        const team = nameToTeamMap[name] ?? normalizeTeam((p.team as string | undefined) ?? "");
+        if (!totals[name]) totals[name] = blankStatLine("", name, team, p.jersey as number | string | null | undefined);
+        const t = totals[name];
+        t.passAtt  += n(p.passAtt);  t.passCmp  += n(p.passCmp);
+        t.passYds  += n(p.passYds);  t.passTDs  += n(p.passTDs);  t.passInt  += n(p.passInt);
+        t.rushAtt  += n(p.rushAtt);  t.rushYds  += n(p.rushYds);  t.rushTDs  += n(p.rushTDs);
+        t.recTgt   += n(p.recTgt);   t.recRec   += n(p.recRec);
+        t.recYds   += n(p.recYds);   t.recTDs   += n(p.recTDs);
+        t.defInt   += n(p.defInt);   t.defPBU   += n(p.defPBU);
+        t.defSacks += n(p.defSacks); t.defPulls += n(p.defPulls);
+        t.defFF    += n(p.defFF);    t.defFR    += n(p.defFR);
+        t.defTDs   += n(p.defTDs);   t.defTFL   += n(p.defTFL);
+        t.fgMade   += n(p.fgMade);
+      }
     }
 
     return { regular: sortedStatLines(regularTotals), playoffs: sortedStatLines(playoffTotals) };

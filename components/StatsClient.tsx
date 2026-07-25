@@ -322,7 +322,7 @@ export default function StatsClient({
                 const isLeader = i === 0;
                 return (
                   <tr
-                    key={row.playerId}
+                    key={row.playerName}
                     className="border-t hover:bg-white/5 transition-colors"
                     style={{
                       borderColor: "var(--border)",
