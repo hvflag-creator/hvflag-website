@@ -126,7 +126,7 @@ export async function getStandingsFromSportsbook(): Promise<SBStanding[]> {
   const h2h: Record<string, Record<string, { wins: number; losses: number; ties: number }>> = {};
 
   function ensure(team: string) {
-    if (!map[team]) map[team] = { team, wins: 0, losses: 0, ties: 0, pointsFor: 0, pointsAgainst: 0, winPct: 0 };
+    if (!map[team]) map[team] = { team, wins: 0, losses: 0, ties: 0, pointsFor: 0, pointsAgainst: 0, winPct: 0, streak: "" };
     return map[team];
   }
 
@@ -224,8 +224,9 @@ export async function getPlayersFromSportsbook(): Promise<SBPlayer[]> {
 // ── Stats (from gameStatSnapshots) ────────────────────────────────────────
 
 function blankStatLine(id: string, name: string, team: string, jersey: number | string | null | undefined): SBStatLine {
+  const jerseyNum = typeof jersey === "string" ? (parseInt(jersey, 10) || null) : (jersey ?? null);
   return {
-    id, name, team, jersey: jersey ?? null,
+    id, name, team, jersey: jerseyNum,
     passAtt: 0, passCmp: 0, passYds: 0, passTDs: 0, passInt: 0,
     rushAtt: 0, rushYds: 0, rushTDs: 0,
     recTgt: 0,  recRec: 0,  recYds: 0,  recTDs: 0,
