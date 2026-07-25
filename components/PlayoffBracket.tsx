@@ -15,6 +15,7 @@ interface BracketGame {
   away: BracketTeam;
   home: BracketTeam;
   status: "final" | "upcoming";
+  overtime?: boolean;
 }
 
 const QF: BracketGame[] = [
@@ -65,6 +66,7 @@ const CHAMP: BracketGame = {
   away: { name: "S&S Par-Tee's", slug: "ss-par-tees", color: "#ec4899", score: 37, winner: true },
   home: { name: "Costellos Maverick Pop", slug: "costellos-maverick-pop", color: "#f5c842", score: 30, eliminated: true },
   status: "final",
+  overtime: true,
 };
 
 function TeamRow({ team, isFinal }: { team: BracketTeam; isFinal: boolean }) {
@@ -197,11 +199,16 @@ export default function PlayoffBracket() {
               <span className="text-[10px] font-display font-semibold uppercase tracking-widest" style={{ color: "rgba(245,200,66,0.6)" }}>
                 Championship
               </span>
-              <span className="text-[10px] font-semibold" style={{ color: "var(--gold)" }}>{CHAMP.date}</span>
+              <div className="flex items-center gap-1.5">
+                {CHAMP.overtime && (
+                  <span className="text-[10px] font-display font-black uppercase px-1 py-0.5 rounded" style={{ background: "rgba(245,200,66,0.2)", color: "var(--gold)" }}>OT</span>
+                )}
+                <span className="text-[10px] font-bold uppercase tracking-wide" style={{ color: "var(--muted)" }}>Final</span>
+              </div>
             </div>
-            <TeamRow team={CHAMP.away} isFinal={false} />
+            <TeamRow team={CHAMP.away} isFinal={true} />
             <div style={{ height: 1, background: "rgba(245,200,66,0.15)", margin: "0 12px" }} />
-            <TeamRow team={CHAMP.home} isFinal={false} />
+            <TeamRow team={CHAMP.home} isFinal={true} />
           </div>
         </div>
       </div>
