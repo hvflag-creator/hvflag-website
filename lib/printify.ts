@@ -92,8 +92,10 @@ export async function createOrder(params: {
     body: JSON.stringify({ ...params, send_shipping_notification: true }),
   });
   if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Printify order failed: ${err}`);
+    const body = await res.text();
+    // 409 = order with this external_id already exists — treat as success (idempotent)
+    if (res.status === 409) return { id: null, already_exists: true };
+    throw new Error(`Printify order failed (${res.status}): ${body}`);
   }
   return res.json();
 }
