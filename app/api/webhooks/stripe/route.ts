@@ -38,7 +38,10 @@ export async function POST(req: Request) {
   const sessionWithShipping = session as Stripe.Checkout.Session & {
     shipping_details?: { address?: Stripe.Address; name?: string };
   };
-  const addr = sessionWithShipping.shipping_details?.address ?? (session as unknown as { shipping?: { address?: Stripe.Address } }).shipping?.address;
+  const addr =
+    sessionWithShipping.shipping_details?.address ??
+    (session as unknown as { shipping?: { address?: Stripe.Address } }).shipping?.address ??
+    session.customer_details?.address ?? undefined;
   const name = sessionWithShipping.shipping_details?.name ?? session.customer_details?.name ?? "Customer";
   const email = session.customer_details?.email ?? "";
   const phone = session.customer_details?.phone ?? undefined;
