@@ -64,12 +64,12 @@ export const TEAM_RECORDS: TeamRecord[] = [
 
   // ── WinterBash 2025 ──────────────────────────────────────────────────────
   // Champion: Kyle (Beacon Bikes) — 3-0 in playoffs
-  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "S&S Par-Tee's", coach: "Jack",  wins: 4, losses: 1, playoffWins: 1, playoffLosses: 1 },
-  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Costellos",     coach: "Mo",    wins: 0, losses: 5, playoffWins: 0, playoffLosses: 1 },
-  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Marcelo's",     coach: "JJ",    wins: 4, losses: 1, playoffWins: 1, playoffLosses: 1 },
-  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "St Rocco's",    coach: "Ryan",  wins: 4, losses: 1, playoffWins: 0, playoffLosses: 1 },
-  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Stinson's Hub", coach: "Besim", wins: 1, losses: 4, playoffWins: 0, playoffLosses: 1 },
-  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Beacon Bikes",  coach: "Kyle",  wins: 2, losses: 3, playoffWins: 3, playoffLosses: 0, champion: true },
+  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "S&S Par-Tee's",           coach: "Jack",  wins: 4, losses: 1, playoffWins: 1, playoffLosses: 1 },
+  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Costellos Maverick Pop",  coach: "Mo",    wins: 0, losses: 5, playoffWins: 0, playoffLosses: 1 },
+  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Marcelo Home Improvement",coach: "JJ",    wins: 4, losses: 1, playoffWins: 1, playoffLosses: 1 },
+  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "St. Rocco's",             coach: "Ryan",  wins: 4, losses: 1, playoffWins: 0, playoffLosses: 1 },
+  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Stinson's Hub",           coach: "Besim", wins: 1, losses: 4, playoffWins: 0, playoffLosses: 1 },
+  { seasonId: "winterbash-2025", seasonName: "WinterBash 2025", teamName: "Beacon Bikes",            coach: "Kyle",  wins: 2, losses: 3, playoffWins: 3, playoffLosses: 0, champion: true },
 
   // ── Summer 2026 ──────────────────────────────────────────────────────────
   // Champion: Jack (S&S Par-Tee's) — 3-0 in playoffs
