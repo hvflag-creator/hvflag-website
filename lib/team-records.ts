@@ -105,7 +105,7 @@ export const FALL_2026_COACHES: Record<string, string> = {
   "Carter's Restaurant": "Jason",
   "Costello's":          "Nick",
   "Beacon Bikes":        "Anthony",
-  "The Vinyl Room":      "Jamison",
+  "The Vinyl Room":      "JJ",
   "Stinson's Hub":       "Ryan",
 };
 
