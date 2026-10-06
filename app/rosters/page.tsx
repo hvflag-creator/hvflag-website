@@ -47,7 +47,7 @@ export default async function RostersPage() {
           <h1 className="font-display font-black text-5xl uppercase tracking-tight">
             <span style={{ color: "var(--gold)" }}>—</span> Rosters
           </h1>
-          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Summer 2026 Season</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Fall 2026 Season</p>
         </div>
       </div>
 
@@ -107,7 +107,7 @@ export default async function RostersPage() {
                             </td>
                             <td className="px-4 py-2 font-semibold">{player.name}</td>
                             <td className="px-4 py-2 text-xs uppercase tracking-wide hidden sm:table-cell" style={{ color: "var(--muted)" }}>
-                              {player.position ?? "—"}
+                              {player.position || (player.isCoach ? "Coach" : "—")}
                             </td>
                           </tr>
                         ))}

@@ -15,7 +15,7 @@ export type SBGame = {
   homeTeam: string;
   awayTeam: string;
   kickoff: string | null;
-  status: "open" | "live" | "settled" | "void";
+  status: "open" | "live" | "settled" | "void" | "upcoming" | "preview";
   result: { homeScore: number; awayScore: number } | null;
 };
 
@@ -25,6 +25,7 @@ export type SBPlayer = {
   team: string;
   jersey?: number | string;
   position?: string;
+  isCoach?: boolean;
 };
 
 export type SBStatLine = {
@@ -211,11 +212,13 @@ export async function getStandingsFromSportsbook(): Promise<SBStanding[]> {
 export async function getPlayersFromSportsbook(): Promise<SBPlayer[]> {
   try {
     const snap = await getDocs(collection(sbDb, "players"));
-    return snap.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-      team: normalizeTeam(d.data().team ?? ""),
-    })) as SBPlayer[];
+    return snap.docs
+      .filter((d) => d.data().active !== false)
+      .map((d) => ({
+        id: d.id,
+        ...d.data(),
+        team: normalizeTeam(d.data().team ?? ""),
+      })) as SBPlayer[];
   } catch {
     return [];
   }
@@ -291,4 +294,28 @@ export async function getStatsByPhase(): Promise<{ regular: SBStatLine[]; playof
 export async function getStatsFromSportsbook(): Promise<SBStatLine[]> {
   const { regular } = await getStatsByPhase();
   return regular;
+}
+
+
+// ── Settled games that don't have a box score yet ─────────────────────────
+// A final score can be posted before the stats are entered. The snapshot doc
+// may exist (every rostered player listed) but with every number at zero.
+export async function getGamesMissingStats(): Promise<SBGame[]> {
+  try {
+    const [settled, snap] = await Promise.all([
+      getSettledGames(),
+      getDocs(collection(sbDb, "gameStatSnapshots")),
+    ]);
+    const activity = ["passAtt", "rushAtt", "recTgt", "recRec", "defPulls", "defInt", "defSacks", "defPBU", "stPunts", "stFGA"];
+    const hasStats = new Set<string>();
+    for (const d of snap.docs) {
+      const players = (d.data().playerStats ?? []) as Array<Record<string, unknown>>;
+      if (players.some((p) => activity.some((k) => typeof p[k] === "number" && (p[k] as number) > 0))) hasStats.add(d.id);
+    }
+    return settled
+      .filter((g) => g.result && !hasStats.has(g.id))
+      .sort((a, b) => (a.kickoff ?? "").localeCompare(b.kickoff ?? ""));
+  } catch {
+    return [];
+  }
 }

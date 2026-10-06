@@ -18,7 +18,8 @@ export default async function HomePage() {
   });
   const weekNumber = (weekId: string) => `Week ${weekIds.indexOf(weekId) + 1}`;
 
-  const upcomingGames = allGames.filter((g) => g.status === "open" || g.status === "live").slice(0, 3);
+  // Anything not yet finished (open for betting, scheduled/upcoming, or live) — allGames is already in kickoff order.
+  const upcomingGames = allGames.filter((g) => g.status !== "settled" && g.status !== "void").slice(0, 3);
   const recentGames = allGames.filter((g) => g.status === "settled").slice(-3).reverse();
 
   return (
@@ -38,7 +39,7 @@ export default async function HomePage() {
             className="inline-block px-4 py-1 rounded-full text-xs font-display font-semibold uppercase tracking-widest"
             style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)", border: "1px solid rgba(245,200,66,0.3)" }}
           >
-            Summer 2026 · Season Complete
+            Fall 2026 · Season Underway
           </div>
 
           <img
@@ -116,7 +117,7 @@ export default async function HomePage() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="grid sm:grid-cols-3 gap-6 mb-16">
           {[
-            { label: "Teams", value: String(teams.length), sub: "Summer 2026" },
+            { label: "Teams", value: String(teams.length), sub: "Fall 2026" },
             { label: "Seasons", value: "6+", sub: "Years of competition" },
             { label: "Location", value: "Beacon", sub: "New York" },
           ].map((stat) => (

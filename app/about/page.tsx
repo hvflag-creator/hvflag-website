@@ -39,10 +39,10 @@ export default function AboutPage() {
             {[
               { label: "Founded", value: "2019" },
               { label: "Seasons per year", value: "2 (Summer & Winter)" },
-              { label: "Teams", value: "8 (and growing)" },
+              { label: "Teams", value: "6 (and growing)" },
               { label: "Location", value: "Beacon, NY 12508" },
               { label: "Type", value: "Non-profit community league" },
-              { label: "Current season", value: "Summer 2026" },
+              { label: "Current season", value: "Fall 2026" },
             ].map((fact) => (
               <div
                 key={fact.label}

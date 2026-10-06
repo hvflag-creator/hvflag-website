@@ -116,6 +116,12 @@ const CATEGORIES: {
   },
 ];
 
+const RATE_MINIMUMS: Record<string, { field: string; min: number }> = {
+  passCmpPct:  { field: "passAtt", min: 10 },
+  rushYPC:     { field: "rushAtt", min: 5 },
+  recCatchPct: { field: "recTgt",  min: 5 },
+};
+
 function getVal(row: ComputedRow, key: string): number {
   const v = (row as Record<string, unknown>)[key];
   return typeof v === "string" ? parseFloat(v) : typeof v === "number" ? v : 0;
@@ -215,7 +221,15 @@ export default function StatsClient({
       {(teamFilter === "all" || hideTeamFilter) && rows.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
           {cat.leaderStats.map(({ key, label }) => {
-            const sorted = [...leaderRows].sort((a, b) => getVal(b, key) - getVal(a, key));
+            // Rate stats need a minimum workload so a 1-for-1 game doesn't top the board.
+            const minReq = RATE_MINIMUMS[key];
+            const pool = minReq
+              ? (() => {
+                  const q = leaderRows.filter((r) => ((r as Record<string, unknown>)[minReq.field] as number) >= minReq.min);
+                  return q.length ? q : leaderRows;
+                })()
+              : leaderRows;
+            const sorted = [...pool].sort((a, b) => getVal(b, key) - getVal(a, key));
             const leader = sorted[0];
             if (!leader) return null;
             const val = (leader as Record<string, unknown>)[key];

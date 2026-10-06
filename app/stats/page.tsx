@@ -1,4 +1,4 @@
-import { getStatsByPhase } from "@/lib/sportsbook";
+import { getStatsByPhase, getGamesMissingStats } from "@/lib/sportsbook";
 import type { SBStatLine } from "@/lib/sportsbook";
 import StatsClient, { type StatRow } from "@/components/StatsClient";
 
@@ -21,7 +21,7 @@ function toRows(lines: SBStatLine[]): StatRow[] {
 }
 
 export default async function StatsPage() {
-  const { regular, playoffs } = await getStatsByPhase();
+  const [{ regular, playoffs }, missing] = await Promise.all([getStatsByPhase(), getGamesMissingStats()]);
 
   return (
     <div>
@@ -34,10 +34,29 @@ export default async function StatsPage() {
             <span style={{ color: "var(--gold)" }}>—</span> Stats
           </h1>
           <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
-            Summer 2026 · Click a column header to sort
+            Fall 2026 · Click a column header to sort
           </p>
         </div>
       </div>
+
+      {missing.length > 0 && (
+        <div className="max-w-6xl mx-auto px-4 pt-8">
+          <div
+            className="rounded-lg px-4 py-3 text-sm"
+            style={{ background: "rgba(245,200,66,0.08)", border: "1px solid rgba(245,200,66,0.3)", color: "var(--muted)" }}
+          >
+            <span className="font-display font-bold uppercase tracking-wide" style={{ color: "var(--gold)" }}>Box scores coming soon · </span>
+            Final scores are posted, but player stats for{" "}
+            {missing.map((g, i) => (
+              <span key={g.id}>
+                {i > 0 && (i === missing.length - 1 ? " and " : ", ")}
+                <span style={{ color: "var(--text)" }}>{g.awayTeam} @ {g.homeTeam}</span>
+              </span>
+            ))}{" "}
+            are still being entered. Totals below will update once they are in.
+          </div>
+        </div>
+      )}
 
       <StatsClient regularRows={toRows(regular)} playoffRows={toRows(playoffs)} />
     </div>

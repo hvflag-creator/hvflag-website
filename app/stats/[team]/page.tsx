@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: { params: Promise<{ team: str
   const { regular } = await getStatsByPhase();
   const teamName = regular.find((p) => teamToSlug(p.team) === slug)?.team;
   if (!teamName) return {};
-  return { title: `${teamName} Stats – Summer 2026` };
+  return { title: `${teamName} Stats – Fall 2026` };
 }
 
 export default async function TeamStatsPage({ params }: { params: Promise<{ team: string }> }) {
@@ -63,7 +63,7 @@ export default async function TeamStatsPage({ params }: { params: Promise<{ team
             <span style={{ color: "var(--gold)" }}>—</span> {teamName}
           </h1>
           <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
-            Summer 2026 · Team Stats
+            Fall 2026 · Team Stats
           </p>
         </div>
       </div>

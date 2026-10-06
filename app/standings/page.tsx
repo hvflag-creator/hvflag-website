@@ -30,7 +30,7 @@ export default async function StandingsPage() {
           <h1 className="font-display font-black text-5xl uppercase tracking-tight">
             <span style={{ color: "var(--gold)" }}>—</span> Standings
           </h1>
-          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Summer 2026 Season</p>
+          <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>Fall 2026 Season</p>
         </div>
       </div>
 
@@ -78,7 +78,7 @@ export default async function StandingsPage() {
                               className="text-xs font-display font-bold px-1.5 py-0.5 rounded hidden sm:inline"
                               style={{ background: "rgba(245,200,66,0.2)", color: "var(--gold)" }}
                             >
-                              2026 Champs
+                              Summer 2026 Champs
                             </span>
                           )}
                         </div>
