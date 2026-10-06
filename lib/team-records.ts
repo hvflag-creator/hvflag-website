@@ -97,9 +97,37 @@ export type CoachAllTimeRecord = {
   totalLosses:   number; // regular season + playoffs
 };
 
-export function getCoachAllTimeRecords(): CoachAllTimeRecord[] {
+// ── Fall 2026 (in progress) ────────────────────────────────────────────────
+// Coaches are fixed; W/L is read live from the sportsbook standings so it
+// stays current as games are settled.
+export const FALL_2026_COACHES: Record<string, string> = {
+  "S&S Par-Tee's":       "Jack",
+  "Carter's Restaurant": "Jason",
+  "Costello's":          "Nick",
+  "Beacon Bikes":        "Anthony",
+  "The Vinyl Room":      "Jamison",
+  "Stinson's Hub":       "Ryan",
+};
+
+export function getFall2026Records(
+  standings: { team: string; wins: number; losses: number }[]
+): TeamRecord[] {
+  return Object.entries(FALL_2026_COACHES).map(([teamName, coach]) => {
+    const st = standings.find((s) => s.team === teamName);
+    return {
+      seasonId: "fall-2026",
+      seasonName: "Fall 2026 (in progress)",
+      teamName,
+      coach,
+      wins: st?.wins ?? 0,
+      losses: st?.losses ?? 0,
+    };
+  });
+}
+
+export function getCoachAllTimeRecords(records: TeamRecord[] = TEAM_RECORDS): CoachAllTimeRecord[] {
   const map = new Map<string, CoachAllTimeRecord>();
-  for (const r of TEAM_RECORDS) {
+  for (const r of records) {
     if (!map.has(r.coach)) {
       map.set(r.coach, { coach: r.coach, wins: 0, losses: 0, ties: 0, seasons: 0, titles: 0, playoffWins: 0, playoffLosses: 0, totalWins: 0, totalLosses: 0 });
     }

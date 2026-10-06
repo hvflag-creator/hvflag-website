@@ -1,11 +1,12 @@
-import { getCoachAllTimeRecords, TEAM_RECORDS } from "@/lib/team-records";
+import { getCoachAllTimeRecords, getFall2026Records, TEAM_RECORDS, type TeamRecord } from "@/lib/team-records";
+import { getStandingsFromSportsbook } from "@/lib/sportsbook";
 
-export const revalidate = 3600;
+export const revalidate = 60;
 
-function groupBySeason() {
+function groupBySeason(records: TeamRecord[]) {
   const order: string[] = [];
-  const map: Record<string, { seasonName: string; teams: typeof TEAM_RECORDS }> = {};
-  for (const r of TEAM_RECORDS) {
+  const map: Record<string, { seasonName: string; teams: TeamRecord[] }> = {};
+  for (const r of records) {
     if (!map[r.seasonId]) {
       map[r.seasonId] = { seasonName: r.seasonName, teams: [] };
       order.push(r.seasonId);
@@ -15,9 +16,12 @@ function groupBySeason() {
   return order.map((id) => map[id]);
 }
 
-export default function CoachesPage() {
-  const allTime = getCoachAllTimeRecords();
-  const seasons = groupBySeason();
+export default async function CoachesPage() {
+  const standings = await getStandingsFromSportsbook();
+  const records = [...TEAM_RECORDS, ...getFall2026Records(standings)];
+  const allTime = getCoachAllTimeRecords(records);
+  // Current season first
+  const seasons = groupBySeason(records).reverse();
 
   return (
     <div>
