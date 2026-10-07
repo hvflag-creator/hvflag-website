@@ -213,7 +213,7 @@ export async function getPlayersFromSportsbook(): Promise<SBPlayer[]> {
   try {
     const snap = await getDocs(collection(sbDb, "players"));
     return snap.docs
-      .filter((d) => d.data().active !== false)
+      .filter((d) => d.data().active !== false && !d.data().isSub) // a team's "Sub Player" is a stat bucket, not a rostered player
       .map((d) => ({
         id: d.id,
         ...d.data(),

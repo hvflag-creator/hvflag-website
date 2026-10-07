@@ -122,6 +122,8 @@ const RATE_MINIMUMS: Record<string, { field: string; min: number }> = {
   recCatchPct: { field: "recTgt",  min: 5 },
 };
 
+const isSubRow = (r: { playerName: string }) => r.playerName.startsWith("Sub Player");
+
 function getVal(row: ComputedRow, key: string): number {
   const v = (row as Record<string, unknown>)[key];
   return typeof v === "string" ? parseFloat(v) : typeof v === "number" ? v : 0;
@@ -167,7 +169,8 @@ export default function StatsClient({
     return list.sort((a, b) => getVal(b, sortKey) - getVal(a, sortKey));
   }, [computed, cat, teamFilter, sortKey]);
 
-  const leaderRows = useMemo(() => computed.filter(cat.filter), [computed, cat]);
+  // A team's "Sub Player" is a collective bucket for fill-ins — shown in the table, never a league leader.
+  const leaderRows = useMemo(() => computed.filter(cat.filter).filter((r) => !isSubRow(r)), [computed, cat]);
 
   const isEmpty = regularRows.length === 0 && playoffRows.length === 0;
 
@@ -333,7 +336,8 @@ export default function StatsClient({
             </thead>
             <tbody>
               {filtered.map((row, i) => {
-                const isLeader = i === 0;
+                const isSub = isSubRow(row);
+                const isLeader = !isSub && filtered.findIndex((r) => !isSubRow(r)) === i;
                 return (
                   <tr
                     key={row.playerName}
@@ -344,7 +348,7 @@ export default function StatsClient({
                     }}
                   >
                     <td className="px-3 py-2.5 text-center tabular-nums text-xs font-bold" style={{ color: "var(--muted)" }}>
-                      {i + 1}
+                      {isSub ? "—" : i + 1 - filtered.slice(0, i).filter(isSubRow).length}
                     </td>
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-2">
