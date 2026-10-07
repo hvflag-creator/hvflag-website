@@ -79,7 +79,8 @@
 
   // ── Styles ─────────────────────────────────────────────────────────────────
   var CSS = [
-    '#hw-decor,#hw-ghosts,#hw-vignette{position:fixed;inset:0;pointer-events:none}',
+    '#hw-decor,#hw-top,#hw-ghosts,#hw-vignette{position:fixed;inset:0;pointer-events:none}',
+    '#hw-top{z-index:60;overflow:hidden}',
     '#hw-vignette{z-index:44;background:radial-gradient(70% 55% at 0% 0%,rgba(139,92,246,.16),transparent 70%),radial-gradient(70% 55% at 100% 0%,rgba(139,92,246,.12),transparent 70%),radial-gradient(80% 45% at 50% 100%,rgba(249,115,22,.14),transparent 75%)}',
     '#hw-decor{z-index:45;overflow:hidden}',
     '#hw-ghosts{z-index:150;overflow:hidden}',
@@ -161,10 +162,12 @@
     var decor = div(); decor.id = "hw-decor";
     var layer = div(); layer.id = "hw-ghosts";
 
-    decor.appendChild(div("hw-web l", COBWEB_SVG));
-    decor.appendChild(div("hw-web r", COBWEB_SVG));
-    var sp1 = div("hw-spider", SPIDER_SVG); sp1.style.left = "min(18vw, 220px)"; decor.appendChild(sp1);
-    var sp2 = div("hw-spider", SPIDER_SVG); sp2.style.right = "min(12vw, 150px)"; sp2.style.animationDelay = "-2s"; sp2.style.width = "clamp(20px,2.4vw,30px)"; decor.appendChild(sp2);
+    // Webs + spiders sit above the sticky header; pumpkins/skeleton stay under bet slips & modals.
+    var top = div(); top.id = "hw-top";
+    top.appendChild(div("hw-web l", COBWEB_SVG));
+    top.appendChild(div("hw-web r", COBWEB_SVG));
+    var sp1 = div("hw-spider", SPIDER_SVG); sp1.style.left = "min(18vw, 220px)"; top.appendChild(sp1);
+    var sp2 = div("hw-spider", SPIDER_SVG); sp2.style.right = "min(12vw, 150px)"; sp2.style.animationDelay = "-2s"; sp2.style.width = "clamp(20px,2.4vw,30px)"; top.appendChild(sp2);
     decor.appendChild(div("hw-pump big", PUMPKIN_SVG));
     decor.appendChild(div("hw-pump sm", PUMPKIN_SVG));
     decor.appendChild(div("hw-pump rt", PUMPKIN_SVG));
@@ -172,6 +175,7 @@
 
     document.body.appendChild(vignette);
     document.body.appendChild(decor);
+    document.body.appendChild(top);
     document.body.appendChild(layer);
 
     if (reduced()) return; // static decorations only
