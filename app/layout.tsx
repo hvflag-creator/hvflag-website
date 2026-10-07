@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { CartProvider } from "@/components/CartProvider";
 import CartDrawer from "@/components/CartDrawer";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "HVFF – Hudson Valley Flag Football",
@@ -36,6 +37,8 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
           <Footer />
         </CartProvider>
+        {/* Halloween 2026 decorations — switches itself off after Oct 31 */}
+        <Script src="/halloween.js" strategy="afterInteractive" />
       </body>
     </html>
   );
