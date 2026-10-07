@@ -93,9 +93,27 @@ export async function createOrder(params: {
   });
   if (!res.ok) {
     const body = await res.text();
-    // 409 = order with this external_id already exists — treat as success (idempotent)
     if (res.status === 409) return { id: null, already_exists: true };
     throw new Error(`Printify order failed (${res.status}): ${body}`);
+  }
+  const order = await res.json();
+
+  // Send to production immediately so it doesn't sit on-hold
+  if (order.id) {
+    await sendToProduction(order.id);
+  }
+
+  return order;
+}
+
+export async function sendToProduction(orderId: string) {
+  const res = await fetch(`${BASE}/shops/${SHOP_ID}/orders/${orderId}/send_to_production.json`, {
+    method: "POST",
+    headers: headers(),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`Printify send_to_production failed (${res.status}): ${body}`);
   }
   return res.json();
 }
