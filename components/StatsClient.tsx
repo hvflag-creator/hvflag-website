@@ -352,7 +352,13 @@ export default function StatsClient({
                     </td>
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold">{row.playerName}</span>
+                        {isSub && (
+                          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className="rounded-full shrink-0" style={{ background: "#232834" }}>
+                            <circle cx="12" cy="9" r="4.2" fill="#69727f" />
+                            <path d="M3.5 24c0-5.2 3.8-8.4 8.5-8.4s8.5 3.2 8.5 8.4z" fill="#69727f" />
+                          </svg>
+                        )}
+                        <span className="font-semibold">{isSub ? "Sub Player" : row.playerName}</span>
                         {isLeader && (teamFilter === "all" || hideTeamFilter) && (
                           <span className="text-xs px-1.5 py-0.5 rounded font-bold" style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)" }}>
                             #1
