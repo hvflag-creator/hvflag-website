@@ -56,6 +56,16 @@ export default function AdminSignupsPage() {
     if (!res.ok) setRows((cur) => cur.map((r) => (r.id === id ? { ...r, handled: !handled } : r)));
   }
 
+  async function remove(id: string, name: string) {
+    if (!confirm(`Delete the sign-up from ${name}? This can't be undone.`)) return;
+    const res = await fetch("/api/admin/signups", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    if (res.ok) setRows((cur) => cur.filter((r) => r.id !== id));
+  }
+
   async function logout() {
     await fetch("/api/admin/logout", { method: "POST" });
     router.push("/admin/login");
@@ -152,6 +162,14 @@ export default function AdminSignupsPage() {
                       style={{ background: r.handled ? "var(--surface2)" : "var(--gold)", color: r.handled ? "var(--text)" : "#0d0f14", border: "1px solid var(--border)" }}
                     >
                       {r.handled ? "Mark as new" : "Mark handled ✓"}
+                    </button>
+                    <button
+                      onClick={() => remove(r.id, r.name)}
+                      title="Delete this sign-up"
+                      className="text-xs px-2.5 py-1.5 rounded"
+                      style={{ color: "#f87171", border: "1px solid var(--border)" }}
+                    >
+                      Delete
                     </button>
                   </div>
                 </div>

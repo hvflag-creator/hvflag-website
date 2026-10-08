@@ -39,3 +39,11 @@ export async function PATCH(req: NextRequest) {
   await getAdminDb().collection("contactSubmissions").doc(id).update({ handled });
   return NextResponse.json({ ok: true });
 }
+
+export async function DELETE(req: NextRequest) {
+  if (!isAdmin(req)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { id } = await req.json();
+  if (typeof id !== "string" || !id) return NextResponse.json({ error: "Invalid data" }, { status: 400 });
+  await getAdminDb().collection("contactSubmissions").doc(id).delete();
+  return NextResponse.json({ ok: true });
+}
