@@ -13,10 +13,45 @@ const POSITIONS: { code: string; label: string; demand: "high" | "low" }[] = [
   { code: "S", label: "Safety", demand: "low" },
 ];
 
+const MESSAGE_LABEL: Record<string, string> = {
+  player: "Anything else we should know?",
+  sponsor: "Tell us about your business & what you're hoping for",
+  general: "Your question",
+  media: "Tell us what you'd like to shoot or create",
+};
+
+const MESSAGE_PLACEHOLDER: Record<string, string> = {
+  player: "Experience level, availability, friends you'd like to play with...",
+  sponsor: "What does your business do? Which team or area would you love to be part of? Any questions about sponsoring?",
+  general: "Ask us anything about the league, schedule, or how it all works...",
+  media: "Photography, video, highlights, social content — tell us what you have in mind...",
+};
+
+const SPONSOR_PERKS = [
+  {
+    icon: "👕",
+    title: "Your name on the jersey",
+    body: "A custom team jersey with your business logo and name on it, worn by the whole roster all season long.",
+  },
+  {
+    icon: "📍",
+    title: "Seen all around the league",
+    body: "Your brand displayed around our league — on game days, at the field, and everywhere our teams show up.",
+  },
+  {
+    icon: "📱",
+    title: "A full season on social media",
+    body: "Featured across our social media for the entire season, so the whole community gets to know your business.",
+  },
+];
+
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", subject: "player", message: "" });
   const [positions, setPositions] = useState<string[]>([]);
+  // Extra fields that only show for sponsors / media.
+  const [business, setBusiness] = useState({ name: "", type: "", link: "" });
+  const [mediaLink, setMediaLink] = useState("");
   const [positionError, setPositionError] = useState(false);
 
   function togglePosition(code: string) {
@@ -95,10 +130,12 @@ export default function ContactPage() {
           >
             <div className="text-4xl mb-3">🏈</div>
             <div className="font-display font-black text-2xl uppercase mb-2" style={{ color: "var(--gold)" }}>
-              Message Sent!
+              {form.subject === "sponsor" ? "Thank You!" : "Message Sent!"}
             </div>
             <p className="text-sm" style={{ color: "var(--muted)" }}>
-              We&apos;ll get back to you soon. In the meantime, follow us on Instagram for updates.
+              {form.subject === "sponsor"
+                ? "We're excited you're interested in sponsoring a team. We'll reach out soon to chat about what that looks like. In the meantime, follow us on Instagram to see the league in action."
+                : "We'll get back to you soon. In the meantime, follow us on Instagram for updates."}
             </p>
           </div>
         ) : (
@@ -165,11 +202,107 @@ export default function ContactPage() {
                   }}
                 >
                   <option value="player">Playing in the league</option>
-                  <option value="sponsor">Sponsoring a team</option>
+                  <option value="sponsor">Sponsoring a team (local businesses welcome!)</option>
                   <option value="general">General question</option>
                   <option value="media">Media / photography</option>
                 </select>
               </div>
+
+              {form.subject === "sponsor" && (
+                <div className="flex flex-col gap-5">
+                  <div
+                    className="rounded-lg p-5"
+                    style={{ background: "rgba(245,200,66,0.07)", border: "1px solid rgba(245,200,66,0.3)" }}
+                  >
+                    <div className="font-display font-black text-xl uppercase tracking-wide mb-1" style={{ color: "var(--gold)" }}>
+                      We&apos;d love to have you on the team 🤝
+                    </div>
+                    <p className="text-sm" style={{ color: "var(--muted)" }}>
+                      HVFF is a non-profit community league in Beacon, NY, and our sponsors are a big part of what makes every season happen.
+                      Tell us a little about your business and we&apos;ll reach out to chat — here&apos;s what you get as a team sponsor:
+                    </p>
+                    <div className="grid sm:grid-cols-3 gap-3 mt-4">
+                      {SPONSOR_PERKS.map((perk) => (
+                        <div key={perk.title} className="rounded-lg p-4" style={{ background: "var(--surface2)", border: "1px solid var(--border)" }}>
+                          <div className="text-2xl mb-1.5">{perk.icon}</div>
+                          <div className="font-display font-bold text-sm uppercase tracking-wide mb-1">{perk.title}</div>
+                          <p className="text-xs leading-relaxed" style={{ color: "var(--muted)" }}>{perk.body}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: "var(--muted)" }}>
+                        Business name *
+                      </label>
+                      <input
+                        required
+                        type="text"
+                        value={business.name}
+                        onChange={(e) => setBusiness({ ...business, name: e.target.value })}
+                        className="w-full rounded px-3 py-2.5 text-sm outline-none"
+                        style={{ background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                        placeholder="Your business"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: "var(--muted)" }}>
+                        What does your business do?
+                      </label>
+                      <input
+                        type="text"
+                        value={business.type}
+                        onChange={(e) => setBusiness({ ...business, type: e.target.value })}
+                        className="w-full rounded px-3 py-2.5 text-sm outline-none"
+                        style={{ background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                        placeholder="Restaurant, shop, service..."
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: "var(--muted)" }}>
+                      Website or Instagram
+                    </label>
+                    <input
+                      type="text"
+                      value={business.link}
+                      onChange={(e) => setBusiness({ ...business, link: e.target.value })}
+                      className="w-full rounded px-3 py-2.5 text-sm outline-none"
+                      style={{ background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                      placeholder="yourbusiness.com or @yourbusiness"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {form.subject === "general" && (
+                <p className="text-sm" style={{ color: "var(--muted)" }}>
+                  Curious how the league works, when games are, or how to get involved? Ask away — we&apos;re happy to help.
+                </p>
+              )}
+
+              {form.subject === "media" && (
+                <div className="flex flex-col gap-5">
+                  <p className="text-sm" style={{ color: "var(--muted)" }}>
+                    Photographers, videographers and content creators are always welcome at our games. Tell us what you do and we&apos;ll be in touch.
+                  </p>
+                  <div>
+                    <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: "var(--muted)" }}>
+                      Link to your work
+                    </label>
+                    <input
+                      type="text"
+                      value={mediaLink}
+                      onChange={(e) => setMediaLink(e.target.value)}
+                      className="w-full rounded px-3 py-2.5 text-sm outline-none"
+                      style={{ background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                      placeholder="Portfolio or Instagram"
+                    />
+                  </div>
+                </div>
+              )}
 
               {form.subject === "player" && (
                 <div>
@@ -179,7 +312,7 @@ export default function ContactPage() {
                   <p className="text-sm mb-3" style={{ color: "var(--muted)" }}>
                     We&apos;re looking for <span style={{ color: "var(--gold)", fontWeight: 700 }}>linemen</span> and{" "}
                     <span style={{ color: "var(--gold)", fontWeight: 700 }}>quarterbacks</span>{" "}
-                    most — if you can play one of those, you&apos;ll get a spot.
+                    most — if you can play one of those, you&apos;re more likely to get a spot.
                   </p>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {POSITIONS.map((pos) => {
@@ -226,7 +359,7 @@ export default function ContactPage() {
 
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: "var(--muted)" }}>
-                  Message *
+                  {MESSAGE_LABEL[form.subject] ?? "Message"} *
                 </label>
                 <textarea
                   required
@@ -239,7 +372,7 @@ export default function ContactPage() {
                     border: "1px solid var(--border)",
                     color: "var(--text)",
                   }}
-                  placeholder="Tell us about yourself and what you're looking for..."
+                  placeholder={MESSAGE_PLACEHOLDER[form.subject] ?? "Tell us about yourself and what you're looking for..."}
                 />
               </div>
 
