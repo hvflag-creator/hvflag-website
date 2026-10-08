@@ -11,8 +11,6 @@
  *     // app mode only:
  *     state:    () => ({ loggedIn: bool, remaining: number }),   // catches left
  *     onCatch:  async () => ({ granted, remaining }),            // throws on failure
- *     // site mode only:
- *     siteUrl:  "https://hvff-sportsbook.web.app",
  *   });
  *
  * It switches itself off after Oct 31 (local time), so nothing needs removing.
@@ -214,7 +212,7 @@
         done: function () { carrying = false; scheduleBuck(rand(35000, 70000)); }
       });
       var busy = false;
-      h.el.title = opts.mode === "site" ? "Catch me on FlagBucks!" : "Catch me!";
+      h.el.title = "Catch me!";
       h.el.addEventListener("click", function (ev) {
         ev.stopPropagation();
         if (busy) return; busy = true;
@@ -231,8 +229,7 @@
           setTimeout(function () { if (h.el.parentNode) h.el.remove(); carrying = false; scheduleBuck(rand(35000, 70000)); }, 400);
         }
         if (opts.mode === "site") {
-          finish("Catch me on FlagBucks! 👻", true);
-          if (opts.siteUrl) setTimeout(function () { window.open(opts.siteUrl, "_blank", "noopener"); }, 900);
+          finish("Boo! You caught a ghost! 👻", true);   // just for fun — no redirect
           return;
         }
         Promise.resolve(opts.onCatch ? opts.onCatch() : null).then(function (res) {
@@ -265,5 +262,5 @@
   window.HVFFHalloween = { start: start };
 })();
 
-// hvflag.com: self-start. Ghosts here point visitors to the FlagBucks app.
-HVFFHalloween.start({ mode: "site", tokenSrc: "/hvff-token.png", siteUrl: "https://hvff-sportsbook.web.app" });
+// hvflag.com: self-start (ghosts are just for fun here; FlagBucks catches only count in the app).
+HVFFHalloween.start({ mode: "site", tokenSrc: "/hvff-token.png" });
