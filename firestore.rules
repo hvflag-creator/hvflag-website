@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Sign-up / contact submissions hold names, emails and phone numbers, so they are
+    // closed to every client. Only the server (admin SDK, which bypasses rules) can
+    // touch them. NOTE: Firestore rules are OR'd, so the public-read rule below must
+    // explicitly exclude this collection — a separate "deny" match would not win.
+    //
+    // Everything else: public read, no client writes (unchanged behaviour).
+    match /{col}/{path=**} {
+      allow read: if col != 'contactSubmissions';
+      allow write: if false;
+    }
+  }
+}

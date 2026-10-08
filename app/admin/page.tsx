@@ -86,6 +86,11 @@ export default function AdminShopPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <a href="/admin/signups"
+            className="text-xs font-semibold px-3 py-1.5 rounded"
+            style={{ color: "var(--gold)", border: "1px solid rgba(245,200,66,0.4)" }}>
+            Sign-ups
+          </a>
           <a href="/shop" target="_blank" rel="noopener noreferrer"
             className="text-xs font-semibold px-3 py-1.5 rounded"
             style={{ color: "var(--muted)", border: "1px solid var(--border)" }}>

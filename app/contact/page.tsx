@@ -47,7 +47,10 @@ const SPONSOR_PERKS = [
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
-  const [form, setForm] = useState({ name: "", email: "", subject: "player", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", subject: "player", message: "" });
+  const [company, setCompany] = useState(""); // honeypot — real visitors never see this
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState("");
   const [positions, setPositions] = useState<string[]>([]);
   // Extra fields that only show for sponsors / media.
   const [business, setBusiness] = useState({ name: "", type: "", link: "" });
@@ -59,14 +62,30 @@ export default function ContactPage() {
     setPositions((cur) => (cur.includes(code) ? cur.filter((c) => c !== code) : [...cur, code]));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (form.subject === "player" && positions.length === 0) {
       setPositionError(true);
       return;
     }
-    // TODO: wire up to a form handler (Resend, Formspree, etc.)
-    setSubmitted(true);
+    setSendError("");
+    setSending(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, positions, business, mediaLink, company }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Something went wrong. Please try again.");
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -185,6 +204,21 @@ export default function ContactPage() {
                     placeholder="your@email.com"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wide mb-1.5" style={{ color: "var(--muted)" }}>
+                  Phone <span className="normal-case font-normal">(optional — so we can text you)</span>
+                </label>
+                <input
+                  type="tel"
+                  autoComplete="tel"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  className="w-full rounded px-3 py-2.5 text-sm outline-none transition-colors"
+                  style={{ background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text)" }}
+                  placeholder="(845) 555-1234"
+                />
               </div>
 
               <div>
@@ -376,12 +410,27 @@ export default function ContactPage() {
                 />
               </div>
 
+              {/* Honeypot: hidden from people, tempting for bots */}
+              <input
+                type="text"
+                name="company"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                value={company}
+                onChange={(e) => setCompany(e.target.value)}
+                style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+              />
+
+              {sendError && <p className="text-sm" style={{ color: "#f87171" }}>{sendError}</p>}
+
               <button
                 type="submit"
+                disabled={sending}
                 className="self-start px-8 py-3 rounded font-display font-bold text-sm uppercase tracking-wide transition-transform hover:scale-105"
-                style={{ background: "var(--gold)", color: "#0d0f14" }}
+                style={{ background: "var(--gold)", color: "#0d0f14", opacity: sending ? 0.7 : 1 }}
               >
-                Send Message
+                {sending ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>

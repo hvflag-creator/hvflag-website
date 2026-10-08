@@ -9,11 +9,14 @@ export function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Protect all other /admin routes
-  if (pathname.startsWith("/admin")) {
+  // Protect all other /admin routes and the /api/admin/* endpoints behind them
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
     const token = req.cookies.get("hvff_admin")?.value;
     const expected = btoa(process.env.ADMIN_PASSWORD ?? "");
     if (!token || token !== expected) {
+      if (pathname.startsWith("/api/")) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
       return NextResponse.redirect(new URL("/admin/login", req.url));
     }
   }
@@ -22,5 +25,5 @@ export function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/api/admin/:path*"],
 };
