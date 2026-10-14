@@ -175,24 +175,52 @@ export default function VariantPicker({ product }: Props) {
               const isSelected = selected[optIdx] === value.id;
 
               if (option.type === "color") {
-                if (!available) return null;
+                // Hide only if no enabled variant exists for this color at all
+                const hasAnyVariant = enabledVariants.some((v) => v.options.includes(value.id));
+                if (!hasAnyVariant) return null;
                 const color = value.colors?.[0] ?? "#ccc";
+
+                function handleColorClick() {
+                  if (available) {
+                    setSelected((prev) => ({ ...prev, [optIdx]: value.id }));
+                  } else {
+                    // Color not available in current size — auto-switch to its smallest size
+                    const sizeOptIdx = product.options.findIndex((o) =>
+                      o.name.toLowerCase().startsWith("size")
+                    );
+                    if (sizeOptIdx >= 0) {
+                      for (const sizeVal of product.options[sizeOptIdx].values) {
+                        const match = enabledVariants.find(
+                          (ev) =>
+                            ev.options.includes(value.id) &&
+                            ev.options[sizeOptIdx] === sizeVal.id
+                        );
+                        if (match) {
+                          setSelected((prev) => ({
+                            ...prev,
+                            [optIdx]: value.id,
+                            [sizeOptIdx]: sizeVal.id,
+                          }));
+                          break;
+                        }
+                      }
+                    }
+                  }
+                }
+
                 return (
                   <button
                     key={value.id}
                     title={value.title}
-                    disabled={!available}
-                    onClick={() => setSelected((prev) => ({ ...prev, [optIdx]: value.id }))}
+                    onClick={handleColorClick}
                     className="w-7 h-7 rounded-full transition-all"
                     style={{
                       background: color,
-                      border: isSelected
-                        ? "2px solid var(--gold)"
-                        : "2px solid transparent",
+                      border: isSelected ? "2px solid var(--gold)" : "2px solid transparent",
                       outline: isSelected ? "2px solid var(--gold)" : "none",
                       outlineOffset: "2px",
-                      opacity: available ? 1 : 0.25,
-                      cursor: available ? "pointer" : "not-allowed",
+                      opacity: 1,
+                      cursor: "pointer",
                     }}
                   />
                 );
