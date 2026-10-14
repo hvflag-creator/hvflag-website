@@ -12,7 +12,16 @@ interface Props {
 export default function VariantPicker({ product }: Props) {
   const { addItem, openCart } = useCart();
 
-  const enabledVariants = product.variants.filter((v) => v.is_enabled);
+  const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
+  function sizeRank(title: string) {
+    for (let i = 0; i < SIZE_ORDER.length; i++) {
+      if (title.includes(SIZE_ORDER[i])) return i;
+    }
+    return 99;
+  }
+  const enabledVariants = product.variants
+    .filter((v) => v.is_enabled)
+    .sort((a, b) => sizeRank(a.title) - sizeRank(b.title));
 
   // Build option → available values map
   const options = product.options;

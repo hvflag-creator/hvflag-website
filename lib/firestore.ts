@@ -73,21 +73,27 @@ export async function getAllStats(): Promise<PlayerStats[]> {
 
 // ── Shop Config ───────────────────────────────────────────────────────────────
 
-export async function getShopConfig(): Promise<{ enabledProductIds: string[] }> {
+export type ShopConfig = { enabledProductIds: string[]; productOrder: string[] };
+
+export async function getShopConfig(): Promise<ShopConfig> {
   try {
     const adminDb = getAdminDb();
     const snap = await adminDb.collection("config").doc("shop").get();
-    if (!snap.exists) return { enabledProductIds: [] };
-    return snap.data() as { enabledProductIds: string[] };
+    if (!snap.exists) return { enabledProductIds: [], productOrder: [] };
+    const data = snap.data() as Partial<ShopConfig>;
+    return {
+      enabledProductIds: data.enabledProductIds ?? [],
+      productOrder: data.productOrder ?? [],
+    };
   } catch (e) {
     console.error("[getShopConfig]", e);
-    return { enabledProductIds: [] };
+    return { enabledProductIds: [], productOrder: [] };
   }
 }
 
-export async function setShopConfig(enabledProductIds: string[]): Promise<void> {
+export async function setShopConfig(config: ShopConfig): Promise<void> {
   const adminDb = getAdminDb();
-  await adminDb.collection("config").doc("shop").set({ enabledProductIds });
+  await adminDb.collection("config").doc("shop").set(config);
 }
 
 // ── Seasons ───────────────────────────────────────────────────────────────────

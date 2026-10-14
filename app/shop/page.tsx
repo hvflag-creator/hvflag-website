@@ -7,9 +7,19 @@ export const revalidate = 300; // refresh every 5 minutes
 export default async function ShopPage() {
   const [allProducts, config] = await Promise.all([getProducts(), getShopConfig()]);
 
-  const products = config.enabledProductIds.length > 0
-    ? allProducts.filter((p) => config.enabledProductIds.includes(p.id))
+  // Apply saved order, then filter to enabled products
+  const orderedAll = config.productOrder.length > 0
+    ? [
+        ...config.productOrder
+          .map((id) => allProducts.find((p) => p.id === id))
+          .filter((p): p is NonNullable<typeof p> => p != null),
+        ...allProducts.filter((p) => !config.productOrder.includes(p.id)),
+      ]
     : allProducts;
+
+  const products = config.enabledProductIds.length > 0
+    ? orderedAll.filter((p) => config.enabledProductIds.includes(p.id))
+    : orderedAll;
 
   return (
     <div>

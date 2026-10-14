@@ -23,12 +23,11 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const { enabledProductIds } = await req.json();
-  if (!Array.isArray(enabledProductIds)) {
+  const { enabledProductIds, productOrder } = await req.json();
+  if (!Array.isArray(enabledProductIds) || !Array.isArray(productOrder)) {
     return NextResponse.json({ error: "Invalid data" }, { status: 400 });
   }
-  await setShopConfig(enabledProductIds);
-  // Immediately bust the shop page cache so changes are visible right away
+  await setShopConfig({ enabledProductIds, productOrder });
   revalidatePath("/shop");
   revalidatePath("/shop/[productId]", "page");
   return NextResponse.json({ ok: true });

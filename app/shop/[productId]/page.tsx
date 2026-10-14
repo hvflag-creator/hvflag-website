@@ -3,7 +3,7 @@ import VariantPicker from "@/components/VariantPicker";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-export const revalidate = 3600;
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   const products = await getProducts();
