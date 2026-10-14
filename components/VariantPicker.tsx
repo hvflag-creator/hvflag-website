@@ -12,16 +12,7 @@ interface Props {
 export default function VariantPicker({ product }: Props) {
   const { addItem, openCart } = useCart();
 
-  const SIZE_ORDER = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
-  function sizeRank(title: string) {
-    for (let i = 0; i < SIZE_ORDER.length; i++) {
-      if (title.includes(SIZE_ORDER[i])) return i;
-    }
-    return 99;
-  }
-  const enabledVariants = product.variants
-    .filter((v) => v.is_enabled)
-    .sort((a, b) => sizeRank(a.title) - sizeRank(b.title));
+  const enabledVariants = product.variants.filter((v) => v.is_enabled);
 
   // Build option → available values map
   const options = product.options;
@@ -29,12 +20,25 @@ export default function VariantPicker({ product }: Props) {
   // Selected option value IDs, keyed by option index
   const [selected, setSelected] = useState<Record<number, number>>(() => {
     const init: Record<number, number> = {};
-    // Pick defaults from first enabled variant
-    if (enabledVariants[0]) {
-      enabledVariants[0].options.forEach((valId, i) => {
-        init[i] = valId;
-      });
+    if (enabledVariants.length === 0) return init;
+
+    // Try to default to the smallest size by walking the size option's values
+    // (Printify returns them in order: XS, S, M, L, XL, 2XL, 3XL, 4XL)
+    const sizeOptIdx = product.options.findIndex(
+      (o) => o.name.toLowerCase().startsWith("size")
+    );
+    if (sizeOptIdx >= 0) {
+      for (const sizeVal of product.options[sizeOptIdx].values) {
+        const v = enabledVariants.find((ev) => ev.options[sizeOptIdx] === sizeVal.id);
+        if (v) {
+          v.options.forEach((valId, i) => { init[i] = valId; });
+          return init;
+        }
+      }
     }
+
+    // Fallback: first enabled variant
+    enabledVariants[0].options.forEach((valId, i) => { init[i] = valId; });
     return init;
   });
 
