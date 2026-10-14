@@ -185,6 +185,9 @@ export default async function HomePage() {
                         {game.status === "live" && (
                           <span className="px-1.5 py-0.5 rounded text-xs font-bold uppercase animate-pulse" style={{ background: "rgba(245,200,66,0.2)", color: "var(--gold)" }}>Live</span>
                         )}
+                        {game.status === "postponed" && (
+                          <span className="px-1.5 py-0.5 rounded text-xs font-bold uppercase" style={{ background: "rgba(96,165,250,0.15)", color: "#60a5fa" }}>🌧 Postponed — rain</span>
+                        )}
                       </div>
                       <div className="font-display font-bold text-base">
                         {game.awayTeam} <span style={{ color: "var(--muted)" }}>vs</span> {game.homeTeam}

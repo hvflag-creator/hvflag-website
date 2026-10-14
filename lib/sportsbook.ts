@@ -15,8 +15,9 @@ export type SBGame = {
   homeTeam: string;
   awayTeam: string;
   kickoff: string | null;
-  status: "open" | "live" | "settled" | "void" | "upcoming" | "preview";
+  status: "open" | "live" | "settled" | "void" | "upcoming" | "preview" | "postponed";
   result: { homeScore: number; awayScore: number } | null;
+  postponedNote?: string | null; // e.g. "Postponed due to rain — new date TBA"
 };
 
 export type SBPlayer = {
@@ -111,6 +112,7 @@ export async function getAllGames(): Promise<SBGame[]> {
         kickoff: data.kickoff?.toDate?.()?.toISOString() ?? null,
         status: data.status,
         result: data.result ?? RESULT_OVERRIDES[d.id] ?? null,
+        postponedNote: data.postponedNote ?? null,
       } as SBGame;
     }).sort((a, b) => (a.kickoff ?? "").localeCompare(b.kickoff ?? ""));
   } catch {

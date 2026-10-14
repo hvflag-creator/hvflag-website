@@ -70,6 +70,7 @@ export default async function SchedulePage() {
                     const away = getTeamMeta(game.awayTeam, teams);
                     const isSettled = game.status === "settled";
                     const isLive = game.status === "live";
+                    const isPostponed = game.status === "postponed";
                     const kickoff = game.kickoff ? new Date(game.kickoff) : null;
 
                     return (
@@ -88,6 +89,9 @@ export default async function SchedulePage() {
                             </>
                           ) : (
                             "TBD"
+                          )}
+                          {isPostponed && (
+                            <div className="mt-1 font-semibold" style={{ color: "#60a5fa" }}>{game.postponedNote || "Postponed — new date TBA"}</div>
                           )}
                         </div>
 
@@ -125,6 +129,8 @@ export default async function SchedulePage() {
                             <span className="text-xs px-2 py-0.5 rounded font-semibold uppercase animate-pulse" style={{ background: "rgba(245,200,66,0.2)", color: "var(--gold)" }}>Live</span>
                           ) : isSettled ? (
                             <span className="text-xs px-2 py-0.5 rounded font-semibold uppercase" style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)" }}>Final</span>
+                          ) : isPostponed ? (
+                            <span className="text-xs px-2 py-0.5 rounded font-semibold uppercase" style={{ background: "rgba(96,165,250,0.15)", color: "#60a5fa" }}>🌧 Postponed</span>
                           ) : (
                             <span className="text-xs px-2 py-0.5 rounded font-semibold uppercase" style={{ background: "rgba(255,255,255,0.05)", color: "var(--muted)" }}>Upcoming</span>
                           )}
