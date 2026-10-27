@@ -265,8 +265,7 @@ export async function getStatsByPhase(): Promise<{ regular: SBStatLine[]; playof
 
     for (const doc of snap.docs) {
       const data = doc.data();
-      const weekId: string = data.weekId ?? "";
-      const totals = weekId.startsWith("playoffs-") ? playoffTotals : regularTotals;
+      const totals = data.playoff === true ? playoffTotals : regularTotals;
 
       for (const p of (data.playerStats ?? []) as Array<Record<string, unknown>>) {
         if (!p.name) continue; // mirrors FlagBucks: if (!ps.name) continue
