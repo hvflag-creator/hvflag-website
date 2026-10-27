@@ -297,6 +297,47 @@ export async function getStatsFromSportsbook(): Promise<SBStatLine[]> {
   return regular;
 }
 
+export async function getArchivedStatsByPhase(
+  archiveId: string,
+  seasonName: string,
+): Promise<{ name: string; regular: SBStatLine[]; playoffs: SBStatLine[] }> {
+  try {
+    const snap = await getDocs(collection(sbDb, "seasonArchives", archiveId, "gameStatSnapshots"));
+    const regularTotals: Record<string, SBStatLine> = {};
+    const playoffTotals: Record<string, SBStatLine> = {};
+    const n = (v: unknown): number => (typeof v === "number" ? v : 0);
+
+    for (const doc of snap.docs) {
+      const data = doc.data();
+      const totals = data.playoff === true ? playoffTotals : regularTotals;
+      for (const p of (data.playerStats ?? []) as Array<Record<string, unknown>>) {
+        if (!p.name) continue;
+        const name = p.name as string;
+        const team = normalizeTeam((p.team as string | undefined) ?? "");
+        if (!totals[name]) totals[name] = blankStatLine("", name, team, p.jersey as number | string | null | undefined);
+        const t = totals[name];
+        t.passAtt  += n(p.passAtt);  t.passCmp  += n(p.passCmp);
+        t.passYds  += n(p.passYds);  t.passTDs  += n(p.passTDs);  t.passInt  += n(p.passInt);
+        t.rushAtt  += n(p.rushAtt);  t.rushYds  += n(p.rushYds);  t.rushTDs  += n(p.rushTDs);
+        t.recTgt   += n(p.recTgt);   t.recRec   += n(p.recRec);
+        t.recYds   += n(p.recYds);   t.recTDs   += n(p.recTDs);
+        t.defInt   += n(p.defInt);   t.defPBU   += n(p.defPBU);
+        t.defSacks += n(p.defSacks); t.defPulls += n(p.defPulls);
+        t.defFF    += n(p.defFF);    t.defFR    += n(p.defFR);
+        t.defTDs   += n(p.defTDs);   t.defTFL   += n(p.defTFL);
+        t.fgMade   += n(p.fgMade);
+      }
+    }
+    return {
+      name: seasonName,
+      regular: sortedStatLines(regularTotals),
+      playoffs: sortedStatLines(playoffTotals),
+    };
+  } catch {
+    return { name: seasonName, regular: [], playoffs: [] };
+  }
+}
+
 
 // ── Settled games that don't have a box score yet ─────────────────────────
 // A final score can be posted before the stats are entered. The snapshot doc

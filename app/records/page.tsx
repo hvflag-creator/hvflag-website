@@ -2,7 +2,7 @@ import { HISTORICAL_SEASONS, CURRENT_SEASON_NAME } from "@/lib/historical-stats"
 import type { SeasonStat } from "@/lib/historical-stats";
 import type { SBStatLine } from "@/lib/sportsbook";
 import { RECORD_CATEGORIES, computeRecords } from "@/lib/records";
-import { getStatsByPhase } from "@/lib/sportsbook";
+import { getStatsByPhase, getArchivedStatsByPhase } from "@/lib/sportsbook";
 import RecordsClient from "@/components/RecordsClient";
 
 export const revalidate = 60;
@@ -35,18 +35,33 @@ function mergeStatLines(a: SBStatLine[], b: SBStatLine[]): SBStatLine[] {
   return Object.values(map);
 }
 
-export default async function RecordsPage() {
-  const { regular: regularSb, playoffs: playoffSb } = await getStatsByPhase();
+// Seasons tracked in Firestore with per-phase splits (regular vs playoffs).
+// Historical seasons before these are combined totals and only appear in All-Time.
+const ARCHIVED_SEASONS = [
+  { archiveId: "summer-2026", name: "Inaugural HVFF Summer 2026" },
+] as const;
 
+export default async function RecordsPage() {
+  const [{ regular: regularSb, playoffs: playoffSb }, ...archives] = await Promise.all([
+    getStatsByPhase(),
+    ...ARCHIVED_SEASONS.map((s) => getArchivedStatsByPhase(s.archiveId, s.name)),
+  ]);
+
+  // For All-Time: historical combined totals + archived totals + full Fall 2026
+  // (exclude summer-2026 from HISTORICAL_SEASONS since we have the split archive)
+  const historicalExSummer = HISTORICAL_SEASONS.filter((s) => s.id !== "summer-2026");
   const currentAll  = { name: CURRENT_SEASON_NAME, stats: mergeStatLines(regularSb, playoffSb).map(toSeasonStat) };
+
+  // Build per-phase season lists from archives + current season
+  const archiveRegSeasons = archives.map((a) => ({ id: a.name, name: a.name, type: "regular" as const, stats: a.regular.map(toSeasonStat) }));
+  const archivePlaySeasons = archives.map((a) => ({ id: `${a.name} Playoffs`, name: `${a.name} Playoffs`, type: "playoff" as const, stats: a.playoffs.map(toSeasonStat) }));
+
   const currentReg  = { name: CURRENT_SEASON_NAME, stats: regularSb.map(toSeasonStat) };
   const currentPlay = { name: `${CURRENT_SEASON_NAME} Playoffs`, stats: playoffSb.map(toSeasonStat) };
 
-  // Historical stats are full-season totals (never split by phase) — they only
-  // appear in All-Time. Regular Season and Playoffs tabs show current season only.
-  const allRecords     = computeRecords(HISTORICAL_SEASONS, currentAll);
-  const regularRecords = computeRecords([],                 currentReg);
-  const playoffRecords = computeRecords([],                 currentPlay);
+  const allRecords     = computeRecords([...historicalExSummer, ...archiveRegSeasons, ...archivePlaySeasons], currentAll);
+  const regularRecords = computeRecords(archiveRegSeasons,  currentReg);
+  const playoffRecords = computeRecords(archivePlaySeasons, currentPlay);
 
   return (
     <div>
