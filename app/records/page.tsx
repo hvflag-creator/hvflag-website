@@ -42,11 +42,11 @@ export default async function RecordsPage() {
   const currentReg  = { name: CURRENT_SEASON_NAME, stats: regularSb.map(toSeasonStat) };
   const currentPlay = { name: `${CURRENT_SEASON_NAME} Playoffs`, stats: playoffSb.map(toSeasonStat) };
 
-  // Historical stats are full-season totals (regular + playoffs combined) so all
-  // seasons feed every tab. Only the live current season is split by phase.
+  // Historical stats are full-season totals (never split by phase) — they only
+  // appear in All-Time. Regular Season and Playoffs tabs show current season only.
   const allRecords     = computeRecords(HISTORICAL_SEASONS, currentAll);
-  const regularRecords = computeRecords(HISTORICAL_SEASONS, currentReg);
-  const playoffRecords = computeRecords(HISTORICAL_SEASONS, currentPlay);
+  const regularRecords = computeRecords([],                 currentReg);
+  const playoffRecords = computeRecords([],                 currentPlay);
 
   return (
     <div>

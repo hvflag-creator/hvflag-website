@@ -145,7 +145,11 @@ export default function RecordsClient({ allRecords, regularRecords, playoffRecor
         })}
 
         <p className="text-xs text-center pb-4" style={{ color: "var(--muted)" }}>
-          Single-season records computed from all available historical data · Every season since Winter 2020
+          {tab === "all"
+            ? "Single-season bests · Every season since Winter 2020"
+            : tab === "regular"
+            ? "Fall 2026 regular season only · Historical per-phase stats not available"
+            : "Fall 2026 playoffs only · Historical per-phase stats not available"}
         </p>
       </div>
     </>
