@@ -335,58 +335,77 @@ export default function StatsClient({
               </tr>
             </thead>
             <tbody>
-              {filtered.map((row, i) => {
-                const isSub = isSubRow(row);
-                const isLeader = !isSub && filtered.findIndex((r) => !isSubRow(r)) === i;
-                return (
-                  <tr
-                    key={row.playerName}
-                    className="border-t hover:bg-white/5 transition-colors"
-                    style={{
-                      borderColor: "var(--border)",
-                      background: isLeader ? "rgba(245,200,66,0.04)" : "var(--surface)",
-                    }}
-                  >
-                    <td className="px-3 py-2.5 text-center tabular-nums text-xs font-bold" style={{ color: "var(--muted)" }}>
-                      {isSub ? "—" : i + 1 - filtered.slice(0, i).filter(isSubRow).length}
-                    </td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex items-center gap-2">
-                        {isSub && (
-                          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className="rounded-full shrink-0" style={{ background: "#232834" }}>
-                            <circle cx="12" cy="9" r="4.2" fill="#69727f" />
-                            <path d="M3.5 24c0-5.2 3.8-8.4 8.5-8.4s8.5 3.2 8.5 8.4z" fill="#69727f" />
-                          </svg>
-                        )}
-                        <span className="font-semibold">{isSub ? "Sub Player" : row.playerName}</span>
-                        {isLeader && (teamFilter === "all" || hideTeamFilter) && (
-                          <span className="text-xs px-1.5 py-0.5 rounded font-bold" style={{ background: "rgba(245,200,66,0.15)", color: "var(--gold)" }}>
-                            #1
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    {!hideTeamFilter && (
-                      <td className="px-4 py-2.5 text-xs hidden sm:table-cell" style={{ color: "var(--muted)" }}>
-                        {row.teamName}
+              {(() => {
+                // Compute true rank (excluding sub rows) once so we can check ≤ 5
+                let trueRank = 0;
+                return filtered.map((row, i) => {
+                  const isSub = isSubRow(row);
+                  if (!isSub) trueRank++;
+                  const rank = isSub ? null : trueRank;
+                  const isElite = !isSub && rank !== null && rank <= 5 && (teamFilter === "all" || hideTeamFilter);
+                  const isTop = rank === 1 && (teamFilter === "all" || hideTeamFilter);
+
+                  const ELITE_RED = "#e53e3e";
+
+                  return (
+                    <tr
+                      key={row.playerName}
+                      className="border-t hover:bg-white/5 transition-colors"
+                      style={{
+                        borderColor: "var(--border)",
+                        background: isElite ? "rgba(229,62,62,0.05)" : "var(--surface)",
+                        borderLeft: isElite ? `3px solid ${ELITE_RED}` : "3px solid transparent",
+                      }}
+                    >
+                      <td className="px-3 py-2.5 text-center tabular-nums text-xs font-bold"
+                        style={{ color: isElite ? ELITE_RED : "var(--muted)" }}>
+                        {isSub ? "—" : rank}
                       </td>
-                    )}
-                    {cat.cols.map((col) => {
-                      const val = (row as Record<string, unknown>)[col.key];
-                      const display = typeof val === "number" || typeof val === "string" ? String(val) : "—";
-                      return (
-                        <td
-                          key={col.key}
-                          className="px-3 py-2.5 text-center tabular-nums font-display font-bold"
-                          style={{ color: sortKey === col.key ? "var(--gold)" : "var(--text)" }}
-                        >
-                          {display}
+                      <td className="px-4 py-2.5">
+                        <div className="flex items-center gap-2">
+                          {isSub && (
+                            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" className="rounded-full shrink-0" style={{ background: "#232834" }}>
+                              <circle cx="12" cy="9" r="4.2" fill="#69727f" />
+                              <path d="M3.5 24c0-5.2 3.8-8.4 8.5-8.4s8.5 3.2 8.5 8.4z" fill="#69727f" />
+                            </svg>
+                          )}
+                          <span className="font-semibold" style={{ color: isElite ? "var(--text)" : undefined }}>
+                            {isSub ? "Sub Player" : row.playerName}
+                          </span>
+                          {isTop && (
+                            <span className="text-xs px-1.5 py-0.5 rounded font-bold tracking-wide" style={{ background: "rgba(229,62,62,0.18)", color: ELITE_RED }}>
+                              ELITE
+                            </span>
+                          )}
+                          {isElite && !isTop && (
+                            <span className="text-xs px-1.5 py-0.5 rounded font-bold" style={{ background: "rgba(229,62,62,0.1)", color: ELITE_RED }}>
+                              #{rank}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      {!hideTeamFilter && (
+                        <td className="px-4 py-2.5 text-xs hidden sm:table-cell" style={{ color: "var(--muted)" }}>
+                          {row.teamName}
                         </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
+                      )}
+                      {cat.cols.map((col) => {
+                        const val = (row as Record<string, unknown>)[col.key];
+                        const display = typeof val === "number" || typeof val === "string" ? String(val) : "—";
+                        return (
+                          <td
+                            key={col.key}
+                            className="px-3 py-2.5 text-center tabular-nums font-display font-bold"
+                            style={{ color: sortKey === col.key ? (isElite ? ELITE_RED : "var(--gold)") : "var(--text)" }}
+                          >
+                            {display}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                });
+              })()}
             </tbody>
           </table>
         </div>
