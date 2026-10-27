@@ -19,6 +19,7 @@ export type SeasonStat = {
 export type HistoricalSeason = {
   id: string;
   name: string;
+  type: "regular" | "playoff";
   stats: SeasonStat[];
 };
 
@@ -33,7 +34,7 @@ const _ = (p: { playerName: string; teamName: string } & Partial<SeasonStat>): S
 });
 
 export const HISTORICAL_SEASONS: HistoricalSeason[] = [
-  { id: "winter-2020", name: "Winter 2020", stats: [
+  { id: "winter-2020", name: "Winter 2020", type: "regular", stats: [
     _({ playerName: "Finn Costello",   teamName: "", passYds: 1217, passTDs: 13, passInt:  7, rushYds: 112 }),
     _({ playerName: "Besim Dika",      teamName: "", passYds:  913, passTDs:  9, passInt: 10, rushYds:  30, rushTDs: 1, recRec:  9, recYds:  79, recTDs: 1, defInt: 2, defSacks: 2, defTDs: 2 }),
     _({ playerName: "Shane Green",     teamName: "", passYds:  175, passTDs:  4, passInt:  1, recRec:   6, recYds: 130, recTDs: 1, defInt: 4, fgMade: 1 }),
@@ -47,7 +48,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
     _({ playerName: "Ty Long",         teamName: "", recRec:   5, recYds: 115, recTDs: 1, defTDs: 1 }),
   ]},
 
-  { id: "springbash-2021", name: "SpringBash 2021", stats: [
+  { id: "springbash-2021", name: "SpringBash 2021", type: "playoff", stats: [
     // ── Cobras ──────────────────────────────────────────────────────────────
     _({ playerName: "Carter Pedersen",    teamName: "Cobras", recRec: 28, recYds: 430, rushYds:   4, recTDs: 4, rushTDs: 0, defInt: 1, defSacks: 0, defTDs: 0, pancakes: 1 }),
     _({ playerName: "Caden Cutinella",    teamName: "Cobras", recRec: 18, recYds: 410, rushYds:   0, recTDs: 6, rushTDs: 0, defInt: 1, defSacks: 0, defTDs: 0, pancakes: 0 }),
@@ -85,7 +86,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
     _({ playerName: "Finn Costello",     teamName: "Cleavage McNamara", passYds: 1451, passTDs: 13, passInt: 5, rushYds: 148, rushTDs: 2, defInt: 1, defSacks: 0, defTDs: 1, pancakes: 0, fgMade: 6 }),
   ]},
 
-  { id: "winterbash-2022", name: "WinterBash 2022", stats: [
+  { id: "winterbash-2022", name: "WinterBash 2022", type: "playoff", stats: [
     // ── Royal Creeps ─────────────────────────────────────────────────────────
     _({ playerName: "Finn Costello",    teamName: "Royal Creeps", passYds: 2538, passTDs: 11, passInt: 12, rushYds: 131, rushTDs: 1, fgMade: 11, defSacks:  2, defPBU:  1 }),
     _({ playerName: "Tom Flynn",        teamName: "Royal Creeps", recRec: 31, recTDs: 2, recYds: 679, defInt: 3, defPBU:  3 }),
@@ -150,7 +151,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
     _({ playerName: "Jack Rothberg",     teamName: "Red Rockets", defTFL: 1, defPBU: 1 }),
     _({ playerName: "Khalil Kamara",     teamName: "Red Rockets", defTFL: 1, defTDs: 1 }),
   ]},
-  { id: "summer-showdown-2023", name: "Summer Showdown 2023",  stats: [
+  { id: "summer-showdown-2023", name: "Summer Showdown 2023",  type: "regular", stats: [
     // ── Costellos ────────────────────────────────────────────────────────────
     _({ playerName: "Finn Costello",    teamName: "Costellos", passYds: 2371, passTDs: 14, rushYds: 182, rushTDs: 2, recRec:  2, recYds:  36, punt10: 1, punt5: 3, defInt: 1, defPBU: 2 }),
     _({ playerName: "Chase Green",      teamName: "Costellos", recRec: 72, recTDs: 6, recYds: 1019, rushYds:  48, rushTDs: 1, fgMade: 11, defInt: 4, defPBU: 2, defSacks: 4, defFF: 2 }),
@@ -220,7 +221,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
     _({ playerName: "Jayden Quintana",  teamName: "Melzingah", recRec:  2, recYds:  22 }),
     _({ playerName: "Regan Ladue",      teamName: "Melzingah", defSacks: 1 }),
   ]},
-  { id: "winterbash-2023",      name: "WinterBash 2023",       stats: [
+  { id: "winterbash-2023",      name: "WinterBash 2023",       type: "playoff", stats: [
     // ── Pachas Barber Shop ───────────────────────────────────────────────────
     _({ playerName: "Zach Barber",      teamName: "Pachas Barber Shop", passYds: 1687, passTDs: 20, passInt: 1, rushYds: 165, fgMade: 2, punt10: 1, defSacks: 2, defTFL: 1, defInt: 3, defPBU: 3, defTDs: 1 }),
     _({ playerName: "Tyler Haydt",      teamName: "Pachas Barber Shop", rushYds: 206, rushTDs: 1, recRec: 33, recTDs: 8, recYds: 640, defSacks: 2 }),
@@ -309,7 +310,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
     _({ playerName: "Forever Williams", teamName: "Carters Restaurant", rushYds: 157, rushTDs: 1, recRec: 31, recTDs: 4, recYds: 459, defFF: 1, defInt: 1, defPBU: 3 }),
     _({ playerName: "Wilson Ciccone",   teamName: "Carters Restaurant", recRec:  3, recYds:  17, defInt: 2 }),
   ]},
-  { id: "summer-showdown-2024", name: "Summer Showdown 2024",  stats: [
+  { id: "summer-showdown-2024", name: "Summer Showdown 2024",  type: "regular", stats: [
     // ── Pedego ───────────────────────────────────────────────────────────────
     _({ playerName: "Kyle Perrucci",  teamName: "Pedego", passTDs: 14, passYds: 1602, passInt: 3, fgMade: 2, defFF: 1, defFR: 1 }),
     _({ playerName: "Joey Vollaro",   teamName: "Pedego", recRec: 25, recTDs: 5, recYds: 519, defPBU: 4, defInt: 3, defTDs: 1 }),
@@ -397,7 +398,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
     _({ playerName: "Richie Omari",      teamName: "Marcelos", recRec:  2, recYds:  54, defPBU: 1, defInt: 1 }),
     _({ playerName: "Jayden Jones",      teamName: "Marcelos", recRec:  3, recTDs: 1, recYds:  97, defPBU: 2, defInt: 1 }),
   ]},
-  { id: "winterbash-2024",      name: "WinterBash 2024",       stats: [
+  { id: "winterbash-2024",      name: "WinterBash 2024",       type: "playoff", stats: [
     // ── Baja 328 ──────────────────────────────────────────────────────────
     _({ playerName: "Caliel Daughtry",    teamName: "Baja 328", rushYds: 96, rushTDs: 2, recRec: 25, recYds: 428, recTDs: 4, defInt: 1, defPBU: 2, defPulls: 11 }),
     _({ playerName: "Carter Pedersen",    teamName: "Baja 328", recRec: 6, recYds: 144, recTDs: 1, defInt: 2, defPBU: 1, defPulls: 7 }),
@@ -454,7 +455,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
     _({ playerName: "X Collins",          teamName: "Stinson's Hub", defFR: 1 }),
     _({ playerName: "Jared Palm",         teamName: "Stinson's Hub", defSacks: 1 }),
   ]},
-  { id: "summer-showdown-2025", name: "Summer Showdown 2025",  stats: [
+  { id: "summer-showdown-2025", name: "Summer Showdown 2025",  type: "regular", stats: [
     // ── Costellos Maverick Pop ───────────────────────────────────────────────
     _({ playerName: "Declan Costello",  teamName: "Costellos Maverick Pop", passYds: 1291, passTDs: 3, passInt: 8, rushYds:  67, defSacks: 1 }),
     _({ playerName: "Ali T",            teamName: "Costellos Maverick Pop", passYds:   67, passInt: 1, defSacks: 4 }),
@@ -539,7 +540,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
     _({ playerName: "Nick Albra",       teamName: "Baja 328" }),
     _({ playerName: "Joey Ferrone",     teamName: "Baja 328", defFR: 1 }),
   ]},
-  { id: "winterbash-2025",      name: "WinterBash 2025",       stats: [
+  { id: "winterbash-2025",      name: "WinterBash 2025",       type: "playoff", stats: [
     // ── Marcelo Home Improvement ─────────────────────────────────────────────
     _({ playerName: "Shane Green",      teamName: "Marcelo Home Improvement", passAtt: 116, passCmp: 73, passYds: 1276, passTDs: 14, passInt: 7, rushYds: 72, defPulls: 6, defPBU: 2, defFR: 1, defInt: 3, punt5: 1 }),
     _({ playerName: "Joey Vollaro",     teamName: "Marcelo Home Improvement", passAtt: 5, passCmp: 3, passYds: 85, passTDs: 1, rushYds: 7, recRec: 15, recYds: 303, recTDs: 4, defPulls: 18, defSacks: 2, defPBU: 2, defFR: 1 }),
@@ -629,7 +630,7 @@ export const HISTORICAL_SEASONS: HistoricalSeason[] = [
   // ── Summer 2026 (Inaugural HVFF season) ─────────────────────────────────────
   // Frozen from the real season-end stats archived in FlagBucks (hvff-sportsbook
   // Firestore, seasonArchives/summer-2026) before Fall 2026 karma/stats reset.
-  { id: "summer-2026", name: "Inaugural HVFF Summer 2026", stats: [
+  { id: "summer-2026", name: "Inaugural HVFF Summer 2026", type: "regular", stats: [
     // ── S&S Par-Tee's ──
     _({ playerName: "Adam Sovik", teamName: "S&S Par-Tee's", defPBU: 1, defSacks: 8, defPulls: 4, defTFL: 1 }),
     _({ playerName: "Brandon Booker", teamName: "S&S Par-Tee's", rushAtt: 7, rushYds: 37, recTgt: 15, recRec: 10, recYds: 120, defPBU: 2, defSacks: 14, defPulls: 13, defFR: 1, defTFL: 1 }),
